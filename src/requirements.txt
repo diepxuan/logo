@@ -1,3 +1,3 @@
 selenium
 webdriver_manager
-chromedriver-binary-auto
+chromedriver_binary
