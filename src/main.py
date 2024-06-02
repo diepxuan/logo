@@ -1,13 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Replace with the website URL you want to crawl (start with a small number of links)
 website_url = "https://www.diepxuan.com"
 
-# Set up the Chrome webdriver (replace path if needed)
-chromedriver_path = "/usr/local/bin/chromedriver"
-driver = webdriver.Chrome(executable_path=chromedriver_path)
+# Create a new Chrome session using WebDriver Manager
+driver = webdriver.Chrome(service=ChromeDriverManager().install())
 
 # Open the website
 driver.get(website_url)
