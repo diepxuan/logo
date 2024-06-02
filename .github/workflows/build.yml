@@ -36,8 +36,8 @@ jobs:
       
       - run: |
           sudo apt update
-          # sudo apt install -y chromium-chromedriver
-          # chromedriver --version
+          sudo apt install -y chromium-chromedriver
+          chromedriver --version
       
       - run: pip install -r src/requirements.txt
 
