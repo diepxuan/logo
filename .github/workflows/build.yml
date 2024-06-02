@@ -32,7 +32,8 @@ jobs:
           chrome-version: 125
           install-chromedriver: true
       
-      - run: |
+      - if: false
+        run: |
           ${{ steps.setup-chrome.outputs.chrome-path }} --version
           which chrome
           chrome --version
