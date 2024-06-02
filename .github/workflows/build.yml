@@ -47,11 +47,12 @@ jobs:
           python -V
           pip -V
       
-      - if: false
+      - if: true
         run: |
           sudo apt update
           sudo apt install -y chromium-chromedriver
           chromedriver --version
+          which chromedriver
       
       - run: pip install -r src/requirements.txt
 
