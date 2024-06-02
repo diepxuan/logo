@@ -6,7 +6,8 @@ from selenium.webdriver.common.keys import Keys
 website_url = "https://www.diepxuan.com"
 
 # Set up the Chrome webdriver (replace path if needed)
-driver = webdriver.Chrome("/usr/local/bin/chromedriver")
+chromedriver_path = "/usr/local/bin/chromedriver"
+driver = webdriver.Chrome(executable_path=chromedriver_path)
 
 # Open the website
 driver.get(website_url)
