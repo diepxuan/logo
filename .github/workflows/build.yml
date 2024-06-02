@@ -28,6 +28,7 @@ jobs:
       - uses: browser-actions/setup-chrome@v1
         id: setup-chrome
         with:
+          chrome-version: 125
           install-chromedriver: true
       
       - run: |
