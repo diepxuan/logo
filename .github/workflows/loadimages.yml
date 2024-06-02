@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: LoadImage
 
 # Controls when the workflow will run
 on:
@@ -24,6 +24,19 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+          cache: 'pip'
+      
+      - run: |
+          python -V
+          pip -V
+      
+      - run: pip install -r src/requirements.txt
+
+      - run: python src/main.py
 
       # Runs a single command using the runners shell
       - name: Run a one-line script
