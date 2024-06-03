@@ -45,7 +45,7 @@ def urlChecker(url):
         return ""
     if url in lstPage:
         return ""
-    if not any(url not in item for item in lstExcept):
+    if not any(item not in url for item in lstExcept):
         return ""
     return url
 
