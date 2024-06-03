@@ -20,6 +20,13 @@ sudo snap remove firefox ||
             sudo snap remove firefox
     )
 
+if ! which firefox >/dev/null 2>&1; then
+    echo "Firefox is not installed. Installing..."
+    sudo apt update && sudo apt install firefox
+else
+    echo "Firefox is already installed."
+fi
+
 sudo apt install -y software-properties-common
 sudo add-apt-repository ppa:mozillateam/ppa -y
 sudo apt install -y firefox
