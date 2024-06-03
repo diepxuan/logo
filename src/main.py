@@ -33,6 +33,8 @@ class Page:
         return list(set(links))
 
     def crawl(self):
+        if len(urlChecker(self.url).strip()) == 0:
+            return
         for url in [url for url in self.links() if url not in lstPage]:
             try:
                 Page(self.driver, url).crawl()
