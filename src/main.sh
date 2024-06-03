@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 #!/bin/bash
 
+set -e
+# set -u
+
 echo '
 Package: *
 Pin: release o=LP-PPA-mozillateam
@@ -25,3 +28,6 @@ if ! which firefox >/dev/null 2>&1; then
     sudo add-apt-repository ppa:mozillateam/ppa -y
     sudo apt install -y firefox
 fi
+
+pip install -r $(dirname $(realpath "$BASH_SOURCE"))/requirements.txt
+python -u $(dirname $(realpath "$BASH_SOURCE"))/main.py

@@ -18,8 +18,4 @@ jobs:
         with:
           python-version: '3.10' 
           cache: 'pip'
-      - run: bash ./libs/browser.sh
-      - run: pip install -r src/requirements.txt
-      - run: python src/main.py
-        env:
-          chromepath: ${{ steps.setup-chrome.outputs.chrome-path }}
+      - run: bash src/main.sh

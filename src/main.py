@@ -22,6 +22,7 @@ class Page:
     def links(self):
         global lstPage
         links = []
+        time.sleep(0.1)
         self.driver.get(self.url)
         lstPage = lstPage + [self.url]
         print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
