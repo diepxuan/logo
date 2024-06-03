@@ -59,7 +59,10 @@ options.add_argument("-headless")
 
 domain = "www.diepxuan.com"
 lstPage = []
-lstExcept = ["diepxuan.com/customer/account/login/"]
+lstExcept = [
+    "diepxuan.com/customer/account",
+    "diepxuan.com/customer/account",
+]
 
 driver = webdriver.Firefox(options=options)
 driver.implicitly_wait(2)
