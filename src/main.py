@@ -6,18 +6,41 @@ import re
 import sys
 import time
 import os
-
+from urllib.parse import urlparse
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-LOGTYPE = {"INFO": "INFO", "ERROR": "ERROR"}
+
+class Page:
+    def __init__(self, driver: webdriver.Firefox, url):
+        self.driver = driver
+        self.url = urlChecker(url)
+
+    def links(self):
+        global lstPage
+        links = []
+        self.driver.get(self.url)
+        lstPage = lstPage + [self.url]
+        print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
+        for link in self.driver.find_elements(By.TAG_NAME, "a"):
+            url = link.get_attribute("href")
+            if url:
+                links = links + [urlChecker(url)]
+        return list(set(links))
+
+    def crawl(self):
+        for url in [url for url in self.links() if url not in lstPage]:
+            Page(self.driver, url).crawl()
 
 
-def log(mes, log_type=LOGTYPE["INFO"]):
-    print(log_type, datetime.datetime.now(), mes)
+def urlChecker(url):
+    url = url.split("#")[0].rstrip("/")
+    if urlparse(url).netloc == domain:
+        return url
+    return ""
 
 
 options = Options()
@@ -26,24 +49,10 @@ firefox_profile.set_preference("javascript.enabled", False)
 options.profile = firefox_profile
 options.add_argument("-headless")
 
-website_url = "https://www.diepxuan.com"
+domain = "www.diepxuan.com"
+lstPage = []
+
 driver = webdriver.Firefox(options=options)
 driver.implicitly_wait(2)
-driver.get(website_url)
-
-title = driver.title
-print(title)
-links = driver.find_elements(By.TAG_NAME, "a")
-
-# navigation
-
-for link in links:
-    time.sleep(1)
-    link_url = link.get_attribute("href")
-    if link_url:
-        time.sleep(1)
-        driver.get(link_url)
-        print(f"Visited: {link_url}")
-        # log(f"Visited: {link_url}")
-
+Page(driver, f"https://{domain}").crawl()
 driver.quit()
