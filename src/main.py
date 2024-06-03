@@ -45,6 +45,8 @@ def urlChecker(url):
         return ""
     if url in lstPage:
         return ""
+    if not any(url not in item for item in lstExcept):
+        return ""
     return url
 
 
@@ -56,6 +58,7 @@ options.add_argument("-headless")
 
 domain = "www.diepxuan.com"
 lstPage = []
+lstExcept = ["diepxuan.com/customer/account/login/"]
 
 driver = webdriver.Firefox(options=options)
 driver.implicitly_wait(2)
