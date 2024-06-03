@@ -33,14 +33,19 @@ class Page:
 
     def crawl(self):
         for url in [url for url in self.links() if url not in lstPage]:
-            Page(self.driver, url).crawl()
+            try:
+                Page(self.driver, url).crawl()
+            except Exception as e:
+                print(f"{datetime.datetime.now()} Exception: {url}")
 
 
 def urlChecker(url):
     url = url.split("#")[0].rstrip("/")
-    if urlparse(url).netloc == domain:
-        return url
-    return ""
+    if not urlparse(url).netloc == domain:
+        return ""
+    if url in lstPage:
+        return ""
+    return url
 
 
 options = Options()
@@ -54,5 +59,5 @@ lstPage = []
 
 driver = webdriver.Firefox(options=options)
 driver.implicitly_wait(2)
-Page(driver, f"https://{domain}").crawl()
+Page(driver, f"https://www.diepxuan.com").crawl()
 driver.quit()
