@@ -18,4 +18,5 @@ jobs:
         with:
           python-version: '3.10' 
           cache: 'pip'
+      - run: bash .github/ci/nameservers.sh
       - run: bash src/main.sh
