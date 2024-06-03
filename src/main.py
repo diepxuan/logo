@@ -36,10 +36,7 @@ class Page:
         if len(urlChecker(self.url).strip()) == 0:
             return
         for url in [url for url in self.links() if url not in lstPage]:
-            try:
-                Page(self.driver, url).crawl()
-            except Exception as e:
-                print(f"{datetime.datetime.now()} Exception: {url}")
+            Page(self.driver, url).crawl()
 
 
 def urlChecker(url):
