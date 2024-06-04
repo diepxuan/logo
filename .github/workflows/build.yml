@@ -20,4 +20,4 @@ jobs:
           cache: 'pip'
       - run: bash .github/ci/nameservers.sh
         if: false
-      - run: bash src/main.sh
+      - run: bash main.sh

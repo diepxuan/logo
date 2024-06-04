@@ -30,4 +30,5 @@ if ! which firefox >/dev/null 2>&1; then
 fi
 
 pip install -r $(dirname $(realpath "$BASH_SOURCE"))/requirements.txt
-python -u $(dirname $(realpath "$BASH_SOURCE"))/main.py
+export MODE="product"
+python -u src
