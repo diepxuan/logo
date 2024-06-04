@@ -25,7 +25,8 @@ class Page:
         lstPage = lstPage + [self.url]
         print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
         for link in self.driver.find_elements(By.TAG_NAME, "a"):
-            url = self.urlChecker(link.get_attribute("href"))
+            url = link.get_attribute("href")
+            url = self.urlChecker(url=url)
             if url:
                 links = links + [url]
         return list(set(links))

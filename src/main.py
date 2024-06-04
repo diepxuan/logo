@@ -16,11 +16,11 @@ from page import Page
 
 options = Options()
 firefox_profile = FirefoxProfile()
-firefox_profile.set_preference("javascript.enabled", False)
+firefox_profile.set_preference("javascript.enabled", True)
 options.profile = firefox_profile
 options.add_argument("-headless")
 
 driver = webdriver.Firefox(options=options)
 driver.implicitly_wait(2)
-Page(driver, f"https://www.diepxuan.com").crawl()
+Page(driver, url=f"https://www.diepxuan.com").crawl()
 driver.quit()
