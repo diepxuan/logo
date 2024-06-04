@@ -23,3 +23,15 @@ def dirImg(_path=""):
         if not path.exists(imgPath) or not path.isdir(imgPath):
             makedirs(imgPath)
     return imgPath
+
+
+def fromFile(_path=""):
+    with open(_path, "r") as f:
+        lines = f.readlines()
+    return lines
+
+
+def toFile(_path="", _data=[]):
+    with open(_path, "w") as f:
+        for item in _data:
+            f.write(item + "\n")
