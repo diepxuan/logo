@@ -1,3 +1,3 @@
-import src.main as main
+import main
 
 main.crawl()
