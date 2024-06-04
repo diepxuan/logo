@@ -4,11 +4,16 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
 
+import __string as string
+import __os as os
+
+
 domain = "www.diepxuan.com"
 lstPage = []
 lstExcept = [
     "diepxuan.com/customer/account",
     "diepxuan.com/customer/account",
+    "diepxuan.com/no-route",
 ]
 
 
@@ -22,6 +27,7 @@ class Page:
         links = []
         time.sleep(1)
         self.driver.get(self.url)
+        self.pageLoaded()
         lstPage = lstPage + [self.url]
         print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
         for link in self.driver.find_elements(By.TAG_NAME, "a"):
@@ -49,6 +55,22 @@ class Page:
             return ""
         if url in lstPage:
             return ""
-        if not any(item not in url for item in lstExcept):
+        if any(item for item in lstExcept if item in url):
             return ""
         return url
+
+    def pageLoaded(self):
+        if self.productChecker():
+            path = self.url.split("/")[-1].split(".")[0]
+            print(path)
+            path = os.dirImg(path)
+
+    def productChecker(self):
+        try:
+            xpath = "//div[@class='product-info-main']//h1[@class='page-title']"
+            title = self.driver.find_element(By.XPATH, xpath).text
+        except:
+            title = ""
+        if title:
+            return True
+        return False
