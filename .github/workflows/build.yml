@@ -20,4 +20,18 @@ jobs:
           cache: 'pip'
       - run: bash .github/ci/nameservers.sh
         if: false
-      - run: bash src/main.sh
+      - run: bash main.sh
+      - name: Push repository
+        if: false
+        run: |
+          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+            git add images/
+            git commit -m "Update dists at $(date +'%d-%m-%y')" &&
+              # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main ||
+              git push ||
+              git stash &&
+              git pull --rebase &&
+              git stash apply &&
+              # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main || true
+              git push || true
+          fi
