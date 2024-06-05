@@ -13,13 +13,13 @@ def dirSrc():
     print(path.dirname(path.abspath(__file__)))
 
 
-def dirImg(_path=""):
+def dirImg(_path="", make=False):
     imgPath = dirRoot("images")
-    if not path.exists(imgPath) and not path.isdir(imgPath):
+    if make and not path.exists(imgPath):
         makedirs(imgPath)
     if _path:
         imgPath = path.join(imgPath, _path)
-        if not path.exists(imgPath) or not path.isdir(imgPath):
+        if make and not path.exists(imgPath):
             makedirs(imgPath)
     return imgPath
 

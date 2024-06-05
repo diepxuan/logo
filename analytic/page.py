@@ -77,7 +77,7 @@ class Page:
     def pageLoaded(self):
         if self.productChecker():
             path = self.url.split("/")[-1].split(".")[0]
-            path = os.dirImg(path)
+            path = os.dirImg(path, make=True)
 
             configPath = os.path.join(path, "config.ini")
             config = configparser.ConfigParser()
