@@ -22,7 +22,7 @@ jobs:
         if: false
       - run: bash .github/ci/analytic.sh
       - name: Push repository
-        if: false
+        if: true
         run: |
           if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
             git add images/
