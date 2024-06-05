@@ -19,7 +19,6 @@ def dirImg(_path=""):
         makedirs(imgPath)
     if _path:
         imgPath = path.join(imgPath, _path)
-        print(imgPath)
         if not path.exists(imgPath) or not path.isdir(imgPath):
             makedirs(imgPath)
     return imgPath

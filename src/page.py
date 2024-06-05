@@ -1,5 +1,6 @@
 import time
 import datetime
+import configparser
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
@@ -62,8 +63,14 @@ class Page:
     def pageLoaded(self):
         if self.productChecker():
             path = self.url.split("/")[-1].split(".")[0]
-            print(path)
             path = os.dirImg(path)
+
+            configPath = os.path.join(path, "config.ini")
+            config = configparser.ConfigParser()
+            config.read(configPath)
+            config["DEFAULT"]["url"] = self.url
+            with open(configPath, "w") as configfile:
+                config.write(configfile)
 
     def productChecker(self):
         try:
