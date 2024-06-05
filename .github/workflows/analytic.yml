@@ -1,4 +1,4 @@
-name: build
+name: analytic
 on:
   push:
     branches: [ "main" ]
@@ -9,7 +9,7 @@ on:
     - cron: "15 */6 * * *"
 
 jobs:
-  build:
+  analytic:
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,7 @@ jobs:
           cache: 'pip'
       - run: bash .github/ci/nameservers.sh
         if: false
-      - run: bash main.sh
+      - run: bash .github/ci/analytic.sh
       - name: Push repository
         if: false
         run: |

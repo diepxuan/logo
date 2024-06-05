@@ -31,4 +31,4 @@ fi
 
 pip install -r $(dirname $(realpath "$BASH_SOURCE"))/requirements.txt
 export MODE="product"
-python -u src
+python -u analytic
