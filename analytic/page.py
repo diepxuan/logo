@@ -1,7 +1,10 @@
 import time
 import datetime
 import configparser
+
 from selenium import webdriver
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
 
@@ -13,21 +16,31 @@ domain = "www.diepxuan.com"
 lstPage = []
 lstExcept = [
     "diepxuan.com/customer/account",
-    "diepxuan.com/customer/account",
     "diepxuan.com/no-route",
+    "diepxuan.com/checkout",
 ]
 
 
 class Page:
-    def __init__(self, driver: webdriver.Firefox, url):
-        self.driver = driver
+    def __init__(self, url):
         self.url = url
 
     def links(self):
         global lstPage
         links = []
-        time.sleep(1)
+
+        mode = os.environ.get("MODE", "developer")
+        options = Options()
+        firefox_profile = FirefoxProfile()
+        firefox_profile.set_preference("javascript.enabled", mode == "product")
+        options.profile = firefox_profile
+        options.add_argument("-headless")
+
+        self.driver = webdriver.Firefox(options=options)
+        self.driver.implicitly_wait(2)
+
         self.driver.get(self.url)
+        time.sleep(1)
         self.pageLoaded()
         lstPage = lstPage + [self.url]
         print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
@@ -39,11 +52,12 @@ class Page:
             url = self.urlChecker(url=url)
             if url:
                 links = links + [url]
+        self.driver.quit()
         return list(set(links))
 
     def crawl(self):
         for url in [url for url in self.links() if url not in lstPage]:
-            Page(self.driver, url).crawl()
+            Page(url).crawl()
 
     def urlChecker(self, url=""):
         if url:

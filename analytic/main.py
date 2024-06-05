@@ -14,44 +14,26 @@ from selenium.webdriver.common.keys import Keys
 
 import __os as os
 from page import Page
+from search import Search
 
 
 def crawl():
-    mode = os.environ.get("MODE", "developer")
-    options = Options()
-    firefox_profile = FirefoxProfile()
-    firefox_profile.set_preference("javascript.enabled", mode == "product")
-    options.profile = firefox_profile
-    options.add_argument("-headless")
 
-    driver = webdriver.Firefox(options=options)
-    driver.implicitly_wait(2)
-    Page(driver, url=f"https://www.diepxuan.com").crawl()
-    driver.quit()
+    Page(url=f"https://www.diepxuan.com").crawl()
 
 
 def images():
-    mode = os.environ.get("MODE", "developer")
-    options = Options()
-    firefox_profile = FirefoxProfile()
-    firefox_profile.set_preference("javascript.enabled", mode == "product")
-    options.profile = firefox_profile
-    options.add_argument("-headless")
-
-    driver = webdriver.Firefox(options=options)
-    driver.implicitly_wait(2)
-    Page(driver, url=f"https://www.diepxuan.com").crawl()
-    driver.quit()
+    Search(url=f"https://www.diepxuan.com").crawl()
 
 
 def run_as_type():
     _type = os.environ.get("TYPE", "crawl")
     match _type:
         case "crawl":
-            images()
-        case "images":
             crawl()
-        case _:  # Wildcard for any other case
+        case "images":
+            images()
+        case _:
             crawl()
 
 
