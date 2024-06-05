@@ -30,5 +30,30 @@ def crawl():
     driver.quit()
 
 
+def images():
+    mode = os.environ.get("MODE", "developer")
+    options = Options()
+    firefox_profile = FirefoxProfile()
+    firefox_profile.set_preference("javascript.enabled", mode == "product")
+    options.profile = firefox_profile
+    options.add_argument("-headless")
+
+    driver = webdriver.Firefox(options=options)
+    driver.implicitly_wait(2)
+    Page(driver, url=f"https://www.diepxuan.com").crawl()
+    driver.quit()
+
+
+def run_as_type():
+    _type = os.environ.get("TYPE", "crawl")
+    match _type:
+        case "crawl":
+            images()
+        case "images":
+            crawl()
+        case _:  # Wildcard for any other case
+            crawl()
+
+
 if __name__ == "__main__":
-    crawl()
+    run_as_type()

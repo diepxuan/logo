@@ -1,3 +1,3 @@
 import main
 
-main.crawl()
+main.run_as_type()
