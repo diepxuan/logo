@@ -29,6 +29,7 @@ if ! which firefox >/dev/null 2>&1; then
     sudo apt install -y firefox
 fi
 
-pip install -r $(dirname $(realpath "$BASH_SOURCE"))/requirements.txt
+# pip install -r $(dirname $(realpath "$BASH_SOURCE"))/requirements.txt
+pip install -r requirements.txt
 export MODE="product"
 python -u analytic
