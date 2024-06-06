@@ -42,7 +42,9 @@ class Page:
         if self.productChecker():
             _config = config.get(self.path)
             _config["DEFAULT"]["url"] = self.url
-            _config["DEFAULT"]["lastOpen"] = datetime.now()
+            _config["DEFAULT"]["lastOpen"] = datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
             config.set(_config)
         lstPage = lstPage + [self.url]
         print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
