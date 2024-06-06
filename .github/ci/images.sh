@@ -4,6 +4,8 @@
 set -e
 # set -u
 
+sudo killall firefox 2>/dev/null || true
+
 export MODE="product"
 export TYPE="images"
 python -u analytic
