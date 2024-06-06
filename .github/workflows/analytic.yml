@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: sudo timedatectl set-timezone Asia/Ho_Chi_Minh
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:

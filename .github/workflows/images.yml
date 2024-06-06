@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: sudo timedatectl set-timezone Asia/Ho_Chi_Minh
       - uses: actions/checkout@v4
       - run: |
           echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
