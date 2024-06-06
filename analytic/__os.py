@@ -15,7 +15,7 @@ def dirSrc():
 
 def dirImg(_path="", make=False):
     imgPath = dirRoot("images")
-    if make and not path.exists(imgPath):
+    if not path.exists(imgPath):
         makedirs(imgPath)
     if _path:
         imgPath = path.join(imgPath, _path)

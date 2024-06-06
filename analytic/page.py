@@ -45,7 +45,7 @@ class Page:
             _config["DEFAULT"]["lastOpen"] = datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
-            config.set(_config)
+            config.set(self.path, _config)
         lstPage = lstPage + [self.url]
         print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
         for link in self.driver.find_elements(By.TAG_NAME, "a"):

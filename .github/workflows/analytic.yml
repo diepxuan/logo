@@ -42,8 +42,5 @@ jobs:
               git add images/
               git commit -m "Update images at $(date +'%d-%m-%y')"
               git pull --rebase
+              git push origin HEAD:main
             fi
-      - uses: actions/github-script@v6
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: git push origin HEAD:main
