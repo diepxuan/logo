@@ -1,4 +1,4 @@
-name: analytic
+name: images
 on:
   push:
     branches: [ "main" ]
@@ -9,7 +9,7 @@ on:
     - cron: "30 */6 * * *"
 
 jobs:
-  analytic:
+  images:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,7 @@ jobs:
       - run: bash .github/ci/nameservers.sh
         if: false
       - run: bash .github/ci/requirements.sh
-      - run: bash .github/ci/analytic.sh
+      - run: bash .github/ci/images.sh
       - name: Push repository
         if: true
         run: |
