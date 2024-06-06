@@ -1,5 +1,6 @@
 import time
 import configparser
+import shutil
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -38,3 +39,13 @@ def isOld(path) -> bool:
         ) < datetime.now() - timedelta(days=1)
     except:
         return True
+
+
+def remove(path):
+    try:
+        shutil.rmtree(os.dirImg(path))
+        print(f"Folder '{os.dirImg(path)}' removed successfully.")
+        return True
+    except OSError as e:
+        print(f"Error removing folder: {e}")
+        return False
