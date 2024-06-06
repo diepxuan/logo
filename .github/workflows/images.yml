@@ -6,7 +6,7 @@ on:
     branches: [ "main" ]
   workflow_dispatch:
   schedule:
-    - cron: "15 */6 * * *"
+    - cron: "30 */6 * * * { { chance(50) } }"
 
 jobs:
   analytic:

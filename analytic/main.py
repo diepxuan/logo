@@ -13,8 +13,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 import __os as os
+import search
 from page import Page
-from search import Search
 
 
 def crawl():
@@ -23,7 +23,7 @@ def crawl():
 
 
 def images():
-    Search(url=f"https://www.diepxuan.com").crawl()
+    search.crawl()
 
 
 def run_as_type():
