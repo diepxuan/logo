@@ -7,4 +7,6 @@ set -e
 sudo killall firefox 2>/dev/null || true
 
 export MODE="product"
-python -u analytic
+python -u analytic || true
+
+sudo killall firefox 2>/dev/null || true
