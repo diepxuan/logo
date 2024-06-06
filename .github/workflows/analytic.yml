@@ -16,18 +16,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - run: |
-          echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
-          gpg --list-secret-keys --keyid-format=long
-          git config user.email "$GIT_COMMITTER_EMAIL"
-          git config user.name "$GIT_COMMITTER_NAME"
-          git config commit.gpgsign true
-          git config user.signingkey $GPG_KEY_ID
-        env:
-          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
-          GIT_COMMITTER_NAME: ${{ github.repository_owner }}
-          GPG_KEY: ${{ secrets.GPG_KEY }}
-          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.10' 
@@ -37,16 +25,25 @@ jobs:
       - run: bash .github/ci/requirements.sh
       - run: bash .github/ci/analytic.sh
       - name: Push repository
-        if: true
         run: |
-          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
-            git add images/
-            git commit -m "Update dists at $(date +'%d-%m-%y')"
-            # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
-            # git push
-            git stash
-            git pull --rebase
-            git stash apply
-            # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
-            git push
-          fi
+          echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
+            gpg --list-secret-keys --keyid-format=long
+            git config user.email "$GIT_COMMITTER_EMAIL"
+            git config user.name "$GIT_COMMITTER_NAME"
+            git config commit.gpgsign true
+            git config user.signingkey $GPG_KEY_ID
+        env:
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
+          GIT_COMMITTER_NAME: ${{ github.repository_owner }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+      - run: |
+          if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+              git add images/
+              git commit -m "Update images at $(date +'%d-%m-%y')"
+              git pull --rebase
+            fi
+      - uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: git push origin HEAD:main
