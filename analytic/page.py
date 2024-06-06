@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 import __string as string
 import __os as os
+import __config as config
 
 
 domain = "www.diepxuan.com"
@@ -24,24 +25,21 @@ lstExcept = [
 class Page:
     def __init__(self, url):
         self.url = url
+        self.path = self.url.split("/")[-1].split(".")[0]
 
-    def links(self):
+    def links(self) -> list:
         global lstPage
         links = []
 
-        mode = os.environ.get("MODE", "developer")
-        options = Options()
-        firefox_profile = FirefoxProfile()
-        firefox_profile.set_preference("javascript.enabled", mode == "product")
-        options.profile = firefox_profile
-        options.add_argument("-headless")
-
-        self.driver = webdriver.Firefox(options=options)
-        self.driver.implicitly_wait(2)
+        self.browserOpen()
 
         self.driver.get(self.url)
-        time.sleep(1)
-        self.pageLoaded()
+        # time.sleep(1)
+        if self.productChecker():
+            _config = config.get(self.path)
+            _config["DEFAULT"]["url"] = self.url
+            _config["DEFAULT"]["lastOpen"] = datetime.datetime.now()
+            config.set(_config)
         lstPage = lstPage + [self.url]
         print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
         for link in self.driver.find_elements(By.TAG_NAME, "a"):
@@ -52,7 +50,7 @@ class Page:
             url = self.urlChecker(url=url)
             if url:
                 links = links + [url]
-        self.driver.quit()
+        self.browserClose()
         return list(set(links))
 
     def crawl(self):
@@ -74,19 +72,21 @@ class Page:
             return ""
         return url
 
-    def pageLoaded(self):
-        if self.productChecker():
-            path = self.url.split("/")[-1].split(".")[0]
-            path = os.dirImg(path, make=True)
+    def browserOpen(self):
+        mode = os.environ.get("MODE", "developer")
+        options = Options()
+        firefox_profile = FirefoxProfile()
+        firefox_profile.set_preference("javascript.enabled", mode == "product")
+        options.profile = firefox_profile
+        options.add_argument("-headless")
 
-            configPath = os.path.join(path, "config.ini")
-            config = configparser.ConfigParser()
-            config.read(configPath)
-            config["DEFAULT"]["url"] = self.url
-            with open(configPath, "w") as configfile:
-                config.write(configfile)
+        self.driver = webdriver.Firefox(options=options)
+        self.driver.implicitly_wait(2)
 
-    def productChecker(self):
+    def browserClose(self):
+        self.driver.quit()
+
+    def productChecker(self) -> bool:
         try:
             xpath = "//div[@class='product-info-main']//h1[@class='page-title']"
             title = self.driver.find_element(By.XPATH, xpath).text
