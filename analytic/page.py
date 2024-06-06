@@ -1,5 +1,4 @@
 import time
-import datetime
 import configparser
 
 from selenium import webdriver
@@ -7,6 +6,7 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.common.by import By
 from urllib.parse import urlparse
+from datetime import datetime, timedelta
 
 import __string as string
 import __os as os
@@ -20,6 +20,8 @@ lstExcept = [
     "diepxuan.com/no-route",
     "diepxuan.com/checkout",
 ]
+step_max = 50
+step_index = 0
 
 
 class Page:
@@ -30,18 +32,20 @@ class Page:
     def links(self) -> list:
         global lstPage
         links = []
+        if step_index > step_max:
+            return list(set(links))
+        if not config.isOld(self.path):
+            return list(set(links))
 
-        self.browserOpen()
-
-        self.driver.get(self.url)
+        self.browserOpen(self.url)
         # time.sleep(1)
         if self.productChecker():
             _config = config.get(self.path)
             _config["DEFAULT"]["url"] = self.url
-            _config["DEFAULT"]["lastOpen"] = datetime.datetime.now()
+            _config["DEFAULT"]["lastOpen"] = datetime.now()
             config.set(_config)
         lstPage = lstPage + [self.url]
-        print(f"{datetime.datetime.now()} Visited: {self.driver.title} - {self.url}")
+        print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
         for link in self.driver.find_elements(By.TAG_NAME, "a"):
             try:
                 url = link.get_attribute("href")
@@ -72,16 +76,19 @@ class Page:
             return ""
         return url
 
-    def browserOpen(self):
+    def browserOpen(self, url=""):
+        global step_index
         mode = os.environ.get("MODE", "developer")
         options = Options()
         firefox_profile = FirefoxProfile()
         firefox_profile.set_preference("javascript.enabled", mode == "product")
         options.profile = firefox_profile
         options.add_argument("-headless")
-
         self.driver = webdriver.Firefox(options=options)
         self.driver.implicitly_wait(2)
+        if url:
+            self.driver.get(url)
+            step_index += 1
 
     def browserClose(self):
         self.driver.quit()
