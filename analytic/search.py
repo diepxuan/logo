@@ -3,7 +3,10 @@ import datetime
 import configparser
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import (
+    NoSuchElementException,
+    StaleElementReferenceException,
+)
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.common.by import By
@@ -94,6 +97,8 @@ def __search_query(driver: webdriver.Firefox, title):
             body.send_keys(Keys.PAGE_DOWN)
             break
         except NoSuchElementException:
+            continue
+        except StaleElementReferenceException:
             continue
 
 
