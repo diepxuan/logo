@@ -43,7 +43,9 @@ def isOld(path) -> bool:
 
 lstConfig = list
 for item in [
-    item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
+    item
+    for item in os.listdir(os.dirImg(make=True))
+    if os.path.isdir(os.dirImg(item, make=True))
 ]:
     config = configparser.ConfigParser().read(configPath(item))
     config["DEFAULT"]["path"] = item
