@@ -35,6 +35,6 @@ def isOld(path) -> bool:
     try:
         return datetime.strptime(
             config["DEFAULT"]["lastOpen"], "%Y-%m-%d %H:%M:%S"
-        ) < datetime.now() - timedelta(days=2)
+        ) < datetime.now() - timedelta(days=1)
     except:
         return True
