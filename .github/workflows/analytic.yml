@@ -3,7 +3,7 @@ on:
   push:
     branches: [ "main" ]
     paths-ignore:
-      - "images.md"
+      - "images.yml"
   pull_request:
     # branches: [ "main" ]
   workflow_dispatch:
