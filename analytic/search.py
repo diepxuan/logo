@@ -22,6 +22,9 @@ import __os as os
 import __config as config
 import __levenshtein as levenshtein
 
+step_max = 50
+step_index = 0
+
 
 def crawl():
     for item in [
@@ -31,21 +34,20 @@ def crawl():
 
 
 def __search_init(path):
-    driver = __browserOpen()
-    # try:
-    __search_query(driver, path)
-    # except NoSuchElementException as e:
-    # print(e)
+    if step_index > step_max:
+        return
+    if not config.isSearchOld(path):
+        print(f"{path} is new search")
+        return
 
+    driver = __browserOpen()
+    __search_query(driver, path)
     __browserClose(driver)
 
 
 def __search_query(driver: webdriver.Firefox, path):
     global step_index
-    if step_index > step_max:
-        return
-    if not config.isSearchOld(path):
-        return
+
     title = path.replace("-", " ")
     print(f"Searching {title}")
 
@@ -127,6 +129,7 @@ def __search_query(driver: webdriver.Firefox, path):
 
 
 def __browserClose(driver: webdriver.Firefox):
+    # driver.close()
     driver.quit()
 
 
@@ -141,7 +144,3 @@ def __browserOpen() -> webdriver.Firefox:
     driver = webdriver.Firefox(options=options)
     driver.implicitly_wait(2)
     return driver
-
-
-step_max = 50
-step_index = 0

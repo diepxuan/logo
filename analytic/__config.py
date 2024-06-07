@@ -49,6 +49,8 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
         ) < datetime.now() - timedelta(days)
     except:
         return True
+    finally:
+        return True
 
 
 def remove(path):

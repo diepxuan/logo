@@ -30,7 +30,7 @@ class Page:
         self.path = self.url.split("/")[-1].split(".")[0]
 
     def links(self) -> list:
-        global lstPage
+        global lstPage, step_index
         links = []
         if step_index > step_max:
             return list(set(links))
