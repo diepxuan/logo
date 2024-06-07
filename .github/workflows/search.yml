@@ -1,4 +1,4 @@
-name: images
+name: search
 on:
   push:
     branches: [ "main" ]
@@ -11,7 +11,7 @@ on:
     - cron: "*/20 * * * *"
 
 jobs:
-  images:
+  search:
     runs-on: ubuntu-latest
 
     steps:
