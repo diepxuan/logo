@@ -50,7 +50,9 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
     config = get(path)
     if not config.has_section(scope):
         config.add_section(scope)
-        config[scope]["lastOpen"] = datetime.now() - timedelta(10)
+        config[scope]["lastOpen"] = (datetime.now() - timedelta(10)).strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
     return datetime.strptime(
         config[scope]["lastOpen"], "%Y-%m-%d %H:%M:%S"
     ) < datetime.now() - timedelta(days)
