@@ -1,5 +1,4 @@
 import time
-import datetime
 import configparser
 
 from selenium import webdriver
@@ -16,6 +15,7 @@ from selenium.webdriver.support import expected_conditions as EC
 
 from urllib.parse import urlparse
 from unidecode import unidecode
+from datetime import datetime, timedelta
 
 import __string as string
 import __os as os
@@ -49,16 +49,21 @@ def __search_query(driver: webdriver.Firefox, path):
     print(f"Searching {title}")
 
     driver.get("https://www.google.com/")
-    cnf = config.get(path)
-    cnf["search"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    config.set(cnf)
     wait = WebDriverWait(driver, 10)
 
+    cnf = config.get(path)
+    if not cnf.has_section("search"):
+        cnf["search"] = {}
+    cnf["search"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    config.set(cnf)
+
+    # search by title
     search_xpath = "//textarea[@name='q']"
     search_field = wait.until(EC.presence_of_element_located((By.XPATH, search_xpath)))
     search_field.send_keys(title)
     search_field.send_keys(Keys.ENTER)
 
+    # filter DOM for search result
     result_xpath = "//div[@id='search']/div/div/div"
     search_results = wait.until(EC.presence_of_element_located((By.ID, "search")))
     body = driver.find_element(By.TAG_NAME, "body")
@@ -68,34 +73,55 @@ def __search_query(driver: webdriver.Firefox, path):
         body.send_keys(Keys.PAGE_DOWN)
         time.sleep(1)
     search_results = driver.find_elements(By.XPATH, result_xpath)
+    match_percent = 0
+    match_element = None
     for search_result in [
-        search_result for search_result in search_results if search_result.text.strip()
+        search_result
+        for search_result in search_results
+        if len(search_result.text.strip()) > 0
     ]:
         try:
             search_element = search_result.find_element(By.TAG_NAME, "a")
             search_url = search_element.get_attribute("href")
+            search_domain = urlparse(search_url).netloc
             search_title = search_result.find_element(By.TAG_NAME, "h3").text
             search_text = search_result.find_element(By.TAG_NAME, "cite").text
             search_match = levenshtein.percentage(
                 unidecode(search_title).lower(), title
             )
             search_match_txt = "{:.1f}%".format(search_match)
+
+            # show result
             print(f" * {search_match_txt} {search_title}")
             print(f"   - {search_text}")
             print(f"   - {search_url}")
-            if search_match < 70:
-                continue
-            search_element.click()
-            time.sleep(3)
-            body = driver.find_element(By.TAG_NAME, "body")
-            body.send_keys(Keys.PAGE_DOWN)
-            body.send_keys(Keys.PAGE_DOWN)
-            body.send_keys(Keys.PAGE_DOWN)
-            break
+
+            # save config to search images
+            if not cnf.has_section(search_domain):
+                cnf[search_domain] = {}
+            cnf[search_domain]["match"] = "{:.1f}".format(search_match)
+            cnf[search_domain]["title"] = search_title
+            cnf[search_domain]["url"] = "{search_url}"
+            config.set(cnf)
+
+            # note match to go into
+            if match_percent < search_match:
+                match_percent = search_match
+                match_element = search_element
+
         except NoSuchElementException:
             continue
         except StaleElementReferenceException:
             continue
+
+    if match_percent < 70:
+        return
+    match_element.click()
+    # time.sleep(3)
+    body = driver.find_element(By.TAG_NAME, "body")
+    body.send_keys(Keys.PAGE_DOWN)
+    body.send_keys(Keys.PAGE_DOWN)
+    body.send_keys(Keys.PAGE_DOWN)
 
 
 def __browserClose(driver: webdriver.Firefox):
@@ -112,6 +138,7 @@ def __browserOpen() -> webdriver.Firefox:
     # options.add_argument("--new-window")
     driver = webdriver.Firefox(options=options)
     driver.implicitly_wait(2)
+    return driver
 
 
 step_max = 50
