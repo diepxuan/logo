@@ -27,7 +27,7 @@ def set(config=configparser.ConfigParser()):
 
 
 def get(path) -> configparser.ConfigParser:
-    config = configparser.ConfigParser()
+    config = configparser.ConfigParser(strict=False)
     config.read(configPath(path))
     config["DEFAULT"]["path"] = path
     return config
@@ -51,17 +51,14 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
         ) < datetime.now() - timedelta(days)
     except:
         return True
-    finally:
-        return True
 
 
 def valid(config: configparser.ConfigParser):
     try:
         urlparse(config["DEFAULT"]["url"])
+        print(config["DEFAULT"]["url"])
         return True
     except:
-        return False
-    finally:
         return False
 
 

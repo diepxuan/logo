@@ -57,7 +57,7 @@ def __search_query(driver: webdriver.Firefox, path):
 
     cnf = config.get(path)
     if not cnf.has_section("search"):
-        cnf["search"] = {}
+        cnf.add_section("search")
     cnf["search"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     config.set(cnf)
     step_index += 1
@@ -103,7 +103,7 @@ def __search_query(driver: webdriver.Firefox, path):
 
             # save config to search images
             if not cnf.has_section(search_domain):
-                cnf[search_domain] = {}
+                cnf.add_section(search_domain)
             cnf[search_domain]["match"] = "{:.1f}".format(search_match)
             cnf[search_domain]["title"] = "{search_title}"
             cnf[search_domain]["url"] = "{search_url}"
