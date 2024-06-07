@@ -45,7 +45,7 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
     try:
         config = get(path)
         if not config.has_section(scope):
-            config[scope] = {}
+            config.add_section(scope)
         return datetime.strptime(
             config[scope]["lastOpen"], "%Y-%m-%d %H:%M:%S"
         ) < datetime.now() - timedelta(days)

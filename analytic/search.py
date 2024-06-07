@@ -37,10 +37,13 @@ def crawl():
 
 def __search_init(path):
     if step_index > step_max:
+        print(f"index>50 {path}")
         return
     if not config.isSearchOld(path):
+        print(f"is new {path}")
         return
     if not config.valid(config.get(path)):
+        print(f"invalid {path}")
         return
 
     driver = __browserOpen()
