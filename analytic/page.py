@@ -41,7 +41,7 @@ class Page:
         # time.sleep(1)
         if self.productChecker():
             _config = config.get(self.path)
-            _config["DEFAULT"]["url"] = self.url
+            _config["DEFAULT"]["url"] = "{self.url}"
             _config["DEFAULT"]["lastOpen"] = datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"
             )

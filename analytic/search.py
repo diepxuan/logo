@@ -104,7 +104,7 @@ def __search_query(driver: webdriver.Firefox, path):
             if not cnf.has_section(search_domain):
                 cnf[search_domain] = {}
             cnf[search_domain]["match"] = "{:.1f}".format(search_match)
-            cnf[search_domain]["title"] = search_title
+            cnf[search_domain]["title"] = "{search_title}"
             cnf[search_domain]["url"] = "{search_url}"
             config.set(cnf)
 
