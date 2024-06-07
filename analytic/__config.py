@@ -17,10 +17,10 @@ def configPath(path):
     return os.path.join(os.dirImg(path, make=True), "config.ini")
 
 
-def set(path, config=configparser.ConfigParser()):
+def set(config=configparser.ConfigParser()):
+    path = config["DEFAULT"]["path"]
     with open(configPath(path), "w") as configfile:
         config.write(configfile)
-    config["DEFAULT"]["path"] = path
     return config
 
 

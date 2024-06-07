@@ -45,7 +45,7 @@ class Page:
             _config["DEFAULT"]["lastOpen"] = datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
-            config.set(self.path, _config)
+            config.set(_config)
             step_index += 1
         lstPage = lstPage + [self.url]
         print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
