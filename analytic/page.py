@@ -35,7 +35,8 @@ class Page:
         if step_index > step_max:
             return list(set(links))
         if not config.isOld(self.path):
-            return list(set(links))
+            if config.valid(config.get(self.path)):
+                return list(set(links))
 
         self.browserOpen(self.url)
         # time.sleep(1)
@@ -45,7 +46,8 @@ class Page:
             _config["DEFAULT"]["lastOpen"] = datetime.now().strftime(
                 "%Y-%m-%d %H:%M:%S"
             )
-            config.set(_config)
+            if config.valid(_config):
+                config.set(_config)
             step_index += 1
         lstPage = lstPage + [self.url]
         print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
