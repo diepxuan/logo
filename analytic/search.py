@@ -41,6 +41,7 @@ def __search_init(path):
 
 
 def __search_query(driver: webdriver.Firefox, path):
+    global step_index
     if step_index > step_max:
         return
     if not config.isSearchOld(path):
@@ -56,6 +57,7 @@ def __search_query(driver: webdriver.Firefox, path):
         cnf["search"] = {}
     cnf["search"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     config.set(cnf)
+    step_index += 1
 
     # search by title
     search_xpath = "//textarea[@name='q']"
