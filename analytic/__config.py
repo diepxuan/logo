@@ -18,6 +18,8 @@ def configPath(path):
 
 
 def set(config=configparser.ConfigParser()):
+    if not valid(config):
+        return
     path = config["DEFAULT"]["path"]
     with open(configPath(path), "w") as configfile:
         config.write(configfile)
@@ -40,8 +42,8 @@ def isSearchOld(path, days=1) -> bool:
 
 
 def __olded(path, scope="DEFAULT", days=1) -> bool:
-    config = get(path)
     try:
+        config = get(path)
         if not config.has_section(scope):
             config[scope] = {}
         return datetime.strptime(
@@ -51,6 +53,16 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
         return True
     finally:
         return True
+
+
+def valid(config: configparser.ConfigParser):
+    try:
+        urlparse(config["DEFAULT"]["url"])
+        return True
+    except:
+        return False
+    finally:
+        return False
 
 
 def remove(path):
