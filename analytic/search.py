@@ -41,6 +41,10 @@ def __search_init(path):
 
 
 def __search_query(driver: webdriver.Firefox, path):
+    if step_index > step_max:
+        return
+    if not config.isSearchOld(path):
+        return
     title = path.replace("-", " ")
     print(f"Searching {title}")
 

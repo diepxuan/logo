@@ -31,12 +31,20 @@ def get(path) -> configparser.ConfigParser:
     return config
 
 
-def isOld(path) -> bool:
+def isOld(path, days=1) -> bool:
+    return __olded(path, scope="DEFAULT", days=1)
+
+
+def isSearchOld(path, days=1) -> bool:
+    return __olded(path, scope="search", days=1)
+
+
+def __olded(path, scope="DEFAULT", days=1) -> bool:
     config = get(path)
     try:
         return datetime.strptime(
-            config["DEFAULT"]["lastOpen"], "%Y-%m-%d %H:%M:%S"
-        ) < datetime.now() - timedelta(days=1)
+            config[scope]["lastOpen"], "%Y-%m-%d %H:%M:%S"
+        ) < datetime.now() - timedelta(days)
     except:
         return True
 
