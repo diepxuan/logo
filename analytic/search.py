@@ -37,7 +37,8 @@ def __search_init(path):
     if step_index > step_max:
         return
     if not config.isSearchOld(path):
-        print(f"{path} is new search")
+        return
+    if not config.valid(config.get(path)):
         return
 
     driver = __browserOpen()
