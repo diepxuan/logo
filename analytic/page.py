@@ -39,7 +39,11 @@ class Page:
                 return list(set(links))
 
         self.browserOpen(self.url)
+        lstPage = lstPage + [self.url]
+        print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
         # time.sleep(1)
+
+        # create product config
         if self.productChecker():
             _config = config.get(self.path)
             _config["DEFAULT"]["url"] = f"{self.url}"
@@ -49,15 +53,15 @@ class Page:
             if config.valid(_config):
                 config.set(_config)
             step_index += 1
-        lstPage = lstPage + [self.url]
-        print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
+
+        # list all url from page
         for link in self.driver.find_elements(By.TAG_NAME, "a"):
             try:
                 url = link.get_attribute("href")
             except:
                 url = ""
             url = self.urlChecker(url=url)
-            if url:
+            if url and url not in lstPage:
                 links = links + [url]
         self.browserClose()
         return list(set(links))
