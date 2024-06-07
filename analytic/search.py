@@ -13,7 +13,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from unidecode import unidecode
 from datetime import datetime, timedelta
 
@@ -27,7 +27,7 @@ step_index = 0
 
 
 def crawl():
-    print(f"Start search images for product")
+    """product images searching"""
     for item in [
         item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
     ]:
@@ -105,9 +105,9 @@ def __search_query(driver: webdriver.Firefox, path):
             # save config to search images
             if not cnf.has_section(search_domain):
                 cnf.add_section(search_domain)
-            cnf[search_domain]["match"] = "{:.1f}".format(search_match)
-            cnf[search_domain]["title"] = "{search_title}"
-            cnf[search_domain]["url"] = "{search_url}"
+            cnf[search_domain]["match"] = f"{'{:.1f}%%'.format(search_match)}"
+            cnf[search_domain]["title"] = f"{unquote(search_title).replace('%','%%')}"
+            cnf[search_domain]["url"] = f"{unquote(search_url)}"
             config.set(cnf)
 
             # note match to go into
