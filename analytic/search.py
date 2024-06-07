@@ -27,9 +27,11 @@ step_index = 0
 
 
 def crawl():
+    print(f"Start search images for product")
     for item in [
         item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
     ]:
+        print(f"Choise {item}")
         __search_init(item)
 
 
