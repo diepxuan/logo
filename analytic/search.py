@@ -31,19 +31,15 @@ def crawl():
     for item in [
         item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
     ]:
-        print(f"Choise {item}")
         __search_init(item)
 
 
 def __search_init(path):
     if step_index > step_max:
-        print(f"index>50 {path}")
         return
     if not config.isSearchOld(path):
-        print(f"is new {path}")
         return
     if not config.valid(config.get(path)):
-        print(f"invalid {path}")
         return
 
     driver = __browserOpen()

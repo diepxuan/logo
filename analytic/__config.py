@@ -61,7 +61,6 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
 def valid(config: configparser.ConfigParser):
     try:
         urlparse(config["DEFAULT"]["url"])
-        print(config["DEFAULT"]["url"])
         return True
     except:
         return False
