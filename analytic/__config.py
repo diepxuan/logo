@@ -27,9 +27,14 @@ def set(config=configparser.ConfigParser()):
 
 
 def get(path) -> configparser.ConfigParser:
-    config = configparser.ConfigParser(strict=False)
-    config.read(configPath(path))
-    config["DEFAULT"]["path"] = path
+    config = configparser.ConfigParser()
+    try:
+        config.read(configPath(path))
+    except:
+        config = configparser.ConfigParser(strict=False)
+        config.read(configPath(path))
+    finally:
+        config["DEFAULT"]["path"] = path
     return config
 
 
