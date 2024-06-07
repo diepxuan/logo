@@ -49,7 +49,8 @@ def isSearchOld(path, days=1) -> bool:
 def __olded(path, scope="DEFAULT", days=1) -> bool:
     config = get(path)
     if not config.has_section(scope):
-        config.add_section(scope)
+        if scope != "DEFAULT":
+            config.add_section(scope)
         config[scope]["lastOpen"] = (datetime.now() - timedelta(10)).strftime(
             "%Y-%m-%d %H:%M:%S"
         )
