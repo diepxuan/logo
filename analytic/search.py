@@ -19,6 +19,7 @@ from unidecode import unidecode
 
 import __string as string
 import __os as os
+import __config as config
 import __levenshtein as levenshtein
 
 
@@ -30,26 +31,13 @@ def crawl():
 
 
 def __search_init(path):
-    # path = os.dirImg(path)
-    title = path.replace("-", " ")
-    print(f"Searching {title}")
-    mode = os.environ.get("MODE", "developer")
-    options = Options()
-    firefox_profile = FirefoxProfile()
-    firefox_profile.set_preference("javascript.enabled", mode == "product")
-    options.profile = firefox_profile
-    options.add_argument("-headless")
-    # options.add_argument("--new-window")
-
-    driver = webdriver.Firefox(options=options)
-    driver.implicitly_wait(2)
-
+    driver = __browserOpen()
     # try:
-    __search_query(driver, title)
+    __search_query(driver, path)
     # except NoSuchElementException as e:
     # print(e)
 
-    driver.quit()
+    __browserClose(driver)
 
 
 def __search_query(driver: webdriver.Firefox, path):
