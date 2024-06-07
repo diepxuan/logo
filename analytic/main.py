@@ -14,27 +14,25 @@ from selenium.webdriver.common.keys import Keys
 
 import __os as os
 import search
+import images
 from page import Page
 
 
 def crawl():
-
     Page(url=f"https://www.diepxuan.com").crawl()
-
-
-def images():
-    search.crawl()
 
 
 def run_as_type():
     _type = os.environ.get("TYPE", "crawl")
     match _type:
         case "crawl":
-            crawl()
+            Page(url=f"https://www.diepxuan.com").crawl()
         case "images":
-            images()
+            images.crawl()
+        case "search":
+            search.crawl()
         case _:
-            crawl()
+            Page(url=f"https://www.diepxuan.com").crawl()
 
 
 if __name__ == "__main__":
