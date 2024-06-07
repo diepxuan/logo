@@ -46,6 +46,7 @@ class Page:
                 "%Y-%m-%d %H:%M:%S"
             )
             config.set(self.path, _config)
+            step_index += 1
         lstPage = lstPage + [self.url]
         print(f"{datetime.now()} Visited: {self.driver.title} - {self.url}")
         for link in self.driver.find_elements(By.TAG_NAME, "a"):
@@ -90,7 +91,6 @@ class Page:
         self.driver.implicitly_wait(2)
         if url:
             self.driver.get(url)
-            step_index += 1
 
     def browserClose(self):
         self.driver.quit()
