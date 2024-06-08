@@ -17,7 +17,16 @@ jobs:
     steps:
       - run: sudo timedatectl set-timezone Asia/Ho_Chi_Minh
       - uses: actions/checkout@v4
-      - run: |
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+          cache: 'pip'
+      - run: bash .github/ci/nameservers.sh
+        if: false
+      - run: bash .github/ci/requirements.sh
+      - run: bash .github/ci/images.sh
+      - name: Git configuration
+        run: |
           echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
           gpg --list-secret-keys --keyid-format=long
           git config user.email "$GIT_COMMITTER_EMAIL"
@@ -29,25 +38,14 @@ jobs:
           GIT_COMMITTER_NAME: ${{ github.repository_owner }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10' 
-          cache: 'pip'
-      - run: bash .github/ci/nameservers.sh
-        if: false
-      - run: bash .github/ci/requirements.sh
-      - run: bash .github/ci/images.sh
       - name: Push repository
-        if: true
         run: |
-          if [ "$(git status --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+          if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+            git checkout -b ci
             git add images/
-            git commit -m "Update dists at $(date +'%d-%m-%y')"
-            # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
-            # git push
-            git stash
-            git pull --rebase
-            git stash apply
-            # git push https://${{ github.repository_owner }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git main
-            git push
+            git commit -m "Update images at $(date +'%d-%m-%y')"
+            git fetch -ap
+            git branch --set-upstream-to origin/ci ci
+            git pull --rebase -X ours
+            git push origin HEAD:ci
           fi
