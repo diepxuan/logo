@@ -40,9 +40,12 @@ jobs:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
       - name: Push repository
         run: |
+          git fetch -ap
+          git checkout ci
+          git pull
           if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
             git add images/
             git commit -m "Update images at $(date +'%d-%m-%y')"
             git pull --rebase -X ours
-            git push origin HEAD:main
+            git push origin HEAD:ci
           fi
