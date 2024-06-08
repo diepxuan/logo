@@ -29,7 +29,7 @@ step_index = 0
 
 
 def crawl():
-    """product images searching"""
+    """searching another page about product"""
     for item in [
         item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
     ]:

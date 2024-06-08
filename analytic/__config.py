@@ -46,6 +46,10 @@ def isSearchOld(path, days=1) -> bool:
     return __olded(path, scope="search", days=1)
 
 
+def isImagesOld(path, days=1) -> bool:
+    return __olded(path, scope="images", days=1)
+
+
 def __olded(path, scope="DEFAULT", days=1) -> bool:
     config = get(path)
     if not config.has_section(scope):
