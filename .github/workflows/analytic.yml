@@ -2,8 +2,10 @@ name: analytic
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - "images.yml"
+    paths:
+      - 'analytic/__**'
+      - 'analytic/main.py'
+      - 'analytic/page.py'
   pull_request:
     # branches: [ "main" ]
   workflow_dispatch:

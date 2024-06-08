@@ -2,8 +2,10 @@ name: search
 on:
   push:
     branches: [ "main" ]
-    paths-ignore:
-      - "analytic.yml"
+    paths:
+      - 'analytic/__**'
+      - 'analytic/main.py'
+      - 'analytic/search.py'
   pull_request:
     # branches: [ "main" ]
   workflow_dispatch:
