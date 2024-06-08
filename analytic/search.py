@@ -1,10 +1,12 @@
 import time
 import configparser
+import random
 
 from selenium import webdriver
 from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
+    ElementClickInterceptedException,
 )
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
@@ -122,12 +124,19 @@ def __search_query(driver: webdriver.Firefox, path):
 
     if match_percent < 70:
         return
-    match_element.click()
-    # time.sleep(3)
-    body = driver.find_element(By.TAG_NAME, "body")
-    body.send_keys(Keys.PAGE_DOWN)
-    body.send_keys(Keys.PAGE_DOWN)
-    body.send_keys(Keys.PAGE_DOWN)
+    try:
+        driver.execute_script("arguments[0].scrollIntoView(true);", match_element)
+        match_element.click()
+        time.sleep(1)
+        body = driver.find_element(By.TAG_NAME, "body")
+        body.send_keys(Keys.PAGE_DOWN)
+        body.send_keys(Keys.PAGE_DOWN)
+        body.send_keys(Keys.PAGE_DOWN)
+        match_element = random.choice(driver.find_elements(By.TAG_NAME, "a"))
+        match_element.click()
+        time.sleep(1)
+    except:
+        return
 
 
 def __browserClose(driver: webdriver.Firefox):
