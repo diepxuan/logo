@@ -43,11 +43,13 @@ jobs:
       - name: Push repository
         run: |
           if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
-            git checkout -b ci
+            # git checkout -b ci
             git add images/
-            git commit -m "Update images at $(date +'%d-%m-%y')"
+            git commit -m "CI images update"
+            # git commit -m "Update images at $(date +'%d-%m-%y')"
             git fetch -ap
-            git branch --set-upstream-to origin/ci ci
+            # git branch --set-upstream-to origin/ci ci
             git pull --rebase -X ours
-            git push origin HEAD:ci
+            # git push origin HEAD:ci
+            git push origin HEAD:main
           fi
