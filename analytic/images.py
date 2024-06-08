@@ -45,12 +45,19 @@ def __images_init(path):
         return
 
     driver = __browserOpen()
-    print(f'Looking images for "{path}"')
-    # __search_query(driver, path)
+    # print(f'Looking images for "{path}"')
+    __images_looking(driver, path)
     __browserClose(driver)
 
 
-def __search_query(driver: webdriver.Firefox, path):
+def __images_looking(driver: webdriver.Firefox, path):
+    cnf = config.get(path)
+    for section in [section for section in cnf.sections()]:
+        print(section)
+        # print(cnf[section])
+
+
+def __images_looking2(driver: webdriver.Firefox, path):
     global step_index
 
     title = path.replace("-", " ")
