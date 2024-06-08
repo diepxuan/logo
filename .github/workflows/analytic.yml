@@ -47,6 +47,5 @@ jobs:
             git add images/
             git commit -m "Update images at $(date +'%d-%m-%y')"
             git pull --rebase -X ours
-            git checkout -b ci
             git push origin HEAD:ci
           fi
