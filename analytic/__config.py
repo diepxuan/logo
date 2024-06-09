@@ -14,7 +14,9 @@ import __os as os
 
 
 def configPath(path):
-    return os.path.join(os.dirImg(path, make=True), "config.ini")
+    if path:
+        return os.path.join(os.dirImg(path, make=True), "config.ini")
+    return os.path.join(os.dirImg(), "config.ini")
 
 
 def set(config=configparser.ConfigParser()):
@@ -26,7 +28,7 @@ def set(config=configparser.ConfigParser()):
     return config
 
 
-def get(path) -> configparser.ConfigParser:
+def get(path="") -> configparser.ConfigParser:
     config = configparser.ConfigParser()
     try:
         config.read(configPath(path))
