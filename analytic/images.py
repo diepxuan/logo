@@ -23,7 +23,13 @@ import __string as string
 import __os as os
 import __config as config
 import __levenshtein as levenshtein
+import __url as url
 
+lstExcept = [
+    "DEFAULT",
+    "search",
+    "images",
+]
 step_max = 50
 step_index = 0
 
@@ -44,17 +50,24 @@ def __images_init(path):
     if not config.valid(config.get(path)):
         return
 
-    driver = __browserOpen()
     # print(f'Looking images for "{path}"')
-    __images_looking(driver, path)
-    __browserClose(driver)
+    __images_looking(path)
 
 
-def __images_looking(driver: webdriver.Firefox, path):
+def __images_looking(path):
+    xpath = config.get()
     cnf = config.get(path)
-    for section in [section for section in cnf.sections()]:
+    for section in [
+        section
+        for section in cnf.sections()
+        if section not in lstExcept and section in xpath.sections()
+    ]:
+        if not url.valid(cnf[section]["url"]):
+            continue
         print(section)
-        # print(cnf[section])
+        print(cnf[section]["url"])
+        # driver = __browserOpen()
+        # __browserClose(driver)
 
 
 def __images_looking2(driver: webdriver.Firefox, path):
