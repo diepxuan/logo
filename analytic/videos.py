@@ -52,15 +52,16 @@ def crawl():
 def __view(url):
     print(url)
     driver = __browserOpen(url)
+    body = driver.find_element(By.TAG_NAME, "body")
     match urlparse(url).netloc:
         case "www.youtube.com":
-            body = driver.find_element(By.TAG_NAME, "body")
             body.send_keys(Keys.K)
         case "www.facebook.com":
-            body = driver.find_element(By.TAG_NAME, "body")
             body.send_keys(Keys.ESCAPE)
     time.sleep(400)
-    body = driver.find_element(By.TAG_NAME, "body")
+    body.send_keys(Keys.PAGE_DOWN)
+    body.send_keys(Keys.PAGE_DOWN)
+    body.send_keys(Keys.PAGE_DOWN)
     __browserClose(driver)
 
 
