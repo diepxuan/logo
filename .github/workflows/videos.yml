@@ -1,11 +1,11 @@
-name: search
+name: videos
 on:
   push:
     branches: [ "main" ]
     paths:
       - 'analytic/__**'
       - 'analytic/main.py'
-      - 'analytic/search.py'
+      - 'analytic/videos.py'
   pull_request:
     # branches: [ "main" ]
   workflow_dispatch:
@@ -13,7 +13,7 @@ on:
     - cron: "*/20 * * * *"
 
 jobs:
-  search:
+  videos:
     runs-on: ubuntu-latest
 
     steps:
