@@ -1,0 +1,57 @@
+name: search
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'analytic/__**'
+      - 'analytic/main.py'
+      - 'analytic/search.py'
+  pull_request:
+    # branches: [ "main" ]
+  workflow_dispatch:
+  schedule:
+    - cron: "*/20 * * * *"
+
+jobs:
+  search:
+    runs-on: ubuntu-latest
+
+    steps:
+      - run: sudo timedatectl set-timezone Asia/Ho_Chi_Minh
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10' 
+          cache: 'pip'
+      - run: bash .github/ci/nameservers.sh
+        if: false
+      - run: bash .github/ci/requirements.sh
+      - run: bash .github/ci/videos.sh
+      - name: Git configuration
+        if: false
+        run: |
+          echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
+          gpg --list-secret-keys --keyid-format=long
+          git config user.email "$GIT_COMMITTER_EMAIL"
+          git config user.name "$GIT_COMMITTER_NAME"
+          git config commit.gpgsign true
+          git config user.signingkey $GPG_KEY_ID
+        env:
+          GIT_COMMITTER_EMAIL: ${{ secrets.GIT_COMMITTER_EMAIL }}
+          GIT_COMMITTER_NAME: ${{ github.repository_owner }}
+          GPG_KEY: ${{ secrets.GPG_KEY }}
+          GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+      - name: Push repository
+        if: false
+        run: |
+          if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+            # git checkout -b ci
+            git add images/
+            git commit -m "CI images update"
+            # git commit -m "Update images at $(date +'%d-%m-%y')"
+            git fetch -ap
+            # git branch --set-upstream-to origin/ci ci
+            git pull --rebase -X ours
+            # git push origin HEAD:ci
+            git push origin HEAD:main
+          fi
