@@ -15,6 +15,7 @@ from selenium.webdriver.common.keys import Keys
 import __os as os
 import search
 import images
+import videos
 from page import Page
 
 
@@ -31,6 +32,8 @@ def run_as_type():
             images.crawl()
         case "search":
             search.crawl()
+        case "videos":
+            videos.crawl()
         case _:
             Page(url=f"https://www.diepxuan.com").crawl()
 

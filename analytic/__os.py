@@ -24,6 +24,17 @@ def dirImg(_path="", make=False):
     return imgPath
 
 
+def dirVids(_path="", make=False):
+    imgPath = dirRoot("videos")
+    if not path.exists(imgPath):
+        makedirs(imgPath)
+    if _path:
+        imgPath = path.join(imgPath, _path)
+        if make and not path.exists(imgPath):
+            makedirs(imgPath)
+    return imgPath
+
+
 def fromFile(_path=""):
     with open(_path, "r") as f:
         lines = f.readlines()
