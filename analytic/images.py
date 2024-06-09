@@ -60,10 +60,10 @@ def __images_looking(path):
     for section in [
         section
         for section in cnf.sections()
-        if section not in lstExcept and section in xpath.sections()
+        if section not in lstExcept
+        and section in xpath.sections()
+        and url.valid(cnf[section]["url"])
     ]:
-        if not url.valid(cnf[section]["url"]):
-            continue
         print(section)
         print(cnf[section]["url"])
         # driver = __browserOpen()

@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 
 def valid(url) -> bool:
     try:
-        urlparse(url)
-        return True
+        result = urlparse(f"{url}")
+        return all([result.scheme, result.netloc])
     except:
         return False

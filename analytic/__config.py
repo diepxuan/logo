@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 from datetime import datetime, timedelta
 
 import __string as string
+import __url as url
 import __os as os
 
 
@@ -66,11 +67,7 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
 
 
 def valid(config: configparser.ConfigParser):
-    try:
-        urlparse(config["DEFAULT"]["url"])
-        return True
-    except:
-        return False
+    return url.valid(config["DEFAULT"]["url"])
 
 
 def remove(path):
