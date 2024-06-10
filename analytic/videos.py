@@ -121,6 +121,7 @@ def __browserOpen(url="") -> webdriver.Chrome:
 def __view_open(section):
     try:
         functions = {
+            "youtu.be": __view_www_youtube_com,
             "www.youtube.com": __view_www_youtube_com,
             "www.facebook.com": __view_www_facebook_com,
         }
@@ -130,5 +131,5 @@ def __view_open(section):
         return __view_do_nothing
 
 
-def __view_do_nothing(path):
+def __view_do_nothing(driver: webdriver.Chrome, path):
     return
