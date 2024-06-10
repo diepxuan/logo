@@ -8,8 +8,9 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     ElementClickInterceptedException,
 )
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -32,14 +33,18 @@ lstExcept = [
 ]
 step_max = 50
 step_index = 0
+driver: webdriver.Chrome = None
 
 
 def crawl():
     """product images searching"""
+    global driver
+    driver = __browserOpen()
     for item in [
         item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
     ]:
         __images_init(item)
+    __browserClose(driver)
 
 
 def __images_init(path):
@@ -49,8 +54,6 @@ def __images_init(path):
         return
     if not config.valid(config.get(path)):
         return
-
-    # print(f'Looking images for "{path}"')
     __images_looking(path)
 
 
@@ -64,32 +67,42 @@ def __images_looking(path):
         and section in xpath.sections()
         and url.valid(cnf[section]["url"])
     ]:
-
-        driver = __browserOpen(cnf[section]["url"])
-        print(f"search images from {cnf[section]['url']}")
-        wait = WebDriverWait(driver, 10)
-        match section:
-            case "shopee.vn":
-                print(xpath[section]["xpath"])
-                result = wait.until(
-                    EC.presence_of_element_located((By.XPATH, xpath[section]["xpath"]))
-                )
-                # result = driver.find_element(By.XPATH, "//div[@id='modal']")
-                # result = result[0].find_elements(By.TAG_NAME, "picture")
-                print(result)
-                for pic in result.find_elements(By.TAG_NAME, "picture"):
-                    print(pic)
-                    img = pic.find_element(By.TAG_NAME, "img")
-                    print(img.get_attribute("src"))
-                # result.find_elements(By.TAG_NAME, "img")
-                # img_url = result.get_attribute("src")
-                # print(img_url)
-        # print(cnf[section]["url"])
-        # print(xpath[section])
-        __browserClose(driver)
+        __images_open(section)(path)
 
 
-def __images_looking2(driver: webdriver.Firefox, path):
+def __images_open_shopee_vn(path):
+    section = "shopee.vn"
+    xpath = config.get()[section]["xpath"]
+    cnf = config.get(path)
+    url = cnf[section]["url"]
+    print(f"search images from {url}")
+    print(xpath)
+    driver.get(url)
+    # time.sleep(5)
+    # body = driver.find_element(By.TAG_NAME, "body")
+    wait = WebDriverWait(driver, 10)
+    # result = wait.until(EC.presence_of_element_located((By.ID, "modal")))
+    result = wait.until(EC.presence_of_element_located((By.XPATH, xpath)))
+    # result = wait.until(
+    #     EC.presence_of_element_located((By.XPATH, '//div[@id="modal"]'))
+    # )
+    pics = result.find_elements(By.TAG_NAME, "picture")
+    # result = driver.find_element(By.ID, "modal")
+    # result = result[0].find_elements(By.TAG_NAME, "picture")
+    # html_content = result.get_attribute("innerHTML")
+    # print(html_content)
+    # return
+    # print(pics)
+    for pic in result.find_elements(By.TAG_NAME, "picture"):
+        print(pic)
+        img = pic.find_element(By.TAG_NAME, "img")
+        print(img.get_attribute("src"))
+    # result.find_elements(By.TAG_NAME, "img")
+    # img_url = result.get_attribute("src")
+    # print(img_url)
+
+
+def __images_looking2(driver: webdriver.Chrome, path):
     global step_index
 
     title = path.replace("-", " ")
@@ -179,21 +192,34 @@ def __images_looking2(driver: webdriver.Firefox, path):
         return
 
 
-def __browserClose(driver: webdriver.Firefox):
+def __browserClose(driver: webdriver.Chrome):
     # driver.close()
-    driver.quit()
+    driver.close()
 
 
-def __browserOpen(url="") -> webdriver.Firefox:
+def __browserOpen(url="") -> webdriver.Chrome:
     mode = os.environ.get("MODE", "developer")
     options = Options()
-    firefox_profile = FirefoxProfile()
-    firefox_profile.set_preference("javascript.enabled", mode == "product")
-    options.profile = firefox_profile
-    options.add_argument("-headless")
-    # options.add_argument("--new-window")
-    driver = webdriver.Firefox(options=options)
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), options=options
+    )
     driver.implicitly_wait(2)
     if url:
         driver.get(url)
     return driver
+
+
+def __images_open(section):
+    try:
+        functions = {"shopee.vn": __images_open_shopee_vn}
+        function = functions[section]
+        return function
+    except:
+        return __images_open_do_nothing
+
+
+def __images_open_do_nothing(path):
+    return
