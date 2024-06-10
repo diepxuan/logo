@@ -9,8 +9,6 @@ from selenium.common.exceptions import (
     ElementClickInterceptedException,
 )
 
-# from selenium.webdriver.firefox.options import Options
-# from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
@@ -49,7 +47,8 @@ def crawl():
         config = configparser.ConfigParser(strict=False)
         config.read(os.path.join(os.dirVids(), "config.ini"))
     for item in [
-        "https://www.youtube.com/watch?v=TtcMm2V0P_A",
+        "https://youtu.be/PsNoctmpAmw",
+        "https://youtu.be/TtcMm2V0P_A",
         "https://www.facebook.com/share/v/Sx1427JawqaCg8cV/",
     ]:
         __view(item)
