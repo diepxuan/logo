@@ -8,8 +8,13 @@ from selenium.common.exceptions import (
     StaleElementReferenceException,
     ElementClickInterceptedException,
 )
-from selenium.webdriver.firefox.options import Options
-from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+
+# from selenium.webdriver.firefox.options import Options
+# from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
@@ -38,11 +43,11 @@ def crawl():
     """product video searching"""
     config = configparser.ConfigParser()
     config.read(os.path.join(os.dirVids(), "config.ini"))
-    # try:
-    #     config.read(os.path.join(os.dirVids(), "config.ini"))
-    # except:
-    #     config = configparser.ConfigParser(strict=False)
-    #     config.read(os.path.join(os.dirVids(), "config.ini"))
+    try:
+        config.read(os.path.join(os.dirVids(), "config.ini"))
+    except:
+        config = configparser.ConfigParser(strict=False)
+        config.read(os.path.join(os.dirVids(), "config.ini"))
     for item in [
         "https://www.youtube.com/watch?v=TtcMm2V0P_A",
         "https://www.facebook.com/share/v/Sx1427JawqaCg8cV/",
@@ -52,82 +57,90 @@ def crawl():
 
 def __view(url):
     driver = __browserOpen(url)
-    print(url)
-    print(driver.title)
+    __view_open(urlparse(url).netloc)(driver, url)
     # match urlparse(url).netloc:
     #     case "www.youtube.com":
-    #         # wait = WebDriverWait(driver, 10)
-    #         play_button = driver.find_element(By.XPATH, '//button[@class="ytp-button"]')
-    #         print(play_button)
-    #         play_button.click()
-    #         driver.save_screenshot(os.path.join(os.dirVids(), "screenshot.png"))
-    #         duration_element = wait.until(
-    #             EC.presence_of_element_located(
-    #                 # (By.XPATH, "//span[@class='ytp-time-duration']")
-    #                 (By.XPATH, '//button[@class="ytp-button"]')
-    #             )
-    #         )
-    #         body = driver.find_element(By.TAG_NAME, "body")
-    #         body.send_keys(Keys.k)
-    #         video_duration_text = duration_element.text
-
-    #         print(f"Estimated video duration: {video_duration_text}")
-    #         driver.save_screenshot("screenshot.png")
-    #         if video_duration_text:
-    #             minutes, seconds = video_duration_text.split(":")
-    #             estimated_wait_time = int(minutes) * 60 + int(seconds) + 10
-
-    #         user_interaction_detected = False  # Flag to track user interaction
-
-    #         def check_user_interaction():
-    #             global user_interaction_detected
-    #             user_interaction_detected = driver.find_element(
-    #                 By.TAG_NAME, "body"
-    #             ).is_enabled()  # Check if body element is disabled (indicates user interaction)
-
-    #         while not user_interaction_detected:
-    #             driver.implicitly_wait(5)  # Check for interaction every 5 seconds
-    #             check_user_interaction()
-
-    #         print(
-    #             f"Waiting for {estimated_wait_time} seconds (approximate, with buffer)"
-    #         )
-    #         time.sleep(estimated_wait_time)
 
     #     case "www.facebook.com":
     #         body = driver.find_element(By.TAG_NAME, "body")
     #         body.send_keys(Keys.ESCAPE)
-    # # time.sleep(400)
+    # time.sleep(400)
+    # body = driver.find_element(By.TAG_NAME, "body")
     # body.send_keys(Keys.PAGE_DOWN)
     # body.send_keys(Keys.PAGE_DOWN)
     # body.send_keys(Keys.PAGE_DOWN)
     __browserClose(driver)
 
 
-def __browserClose(driver: webdriver.Firefox):
+def __view_www_facebook_com(driver: webdriver.Chrome, url):
+    time.sleep(5)
+    body = driver.find_element(By.TAG_NAME, "body")
+    body.send_keys(Keys.ESCAPE)
+    time.sleep(400)
+    body = driver.find_element(By.TAG_NAME, "body")
+    body.send_keys(Keys.PAGE_UP)
+    body.send_keys(Keys.PAGE_DOWN)
+    body.send_keys(Keys.PAGE_DOWN)
+
+
+def __view_www_youtube_com(driver: webdriver.Chrome, url):
+    wait = WebDriverWait(driver, 2)
+    try:
+        video_element = wait.until(
+            EC.presence_of_element_located((By.ID, "movie_player"))
+        )
+        video_element.send_keys(Keys.SPACE)
+    except NoSuchElementException:
+        print("Couldn't find video element to play.")
+        return
+
+    duration_element = driver.find_element(
+        By.XPATH, "//span[@class='ytp-time-duration']"
+    )
+    video_duration_text = duration_element.text
+
+    print(f"Estimated video duration: {video_duration_text}")
+    if video_duration_text:
+        minutes, seconds = video_duration_text.split(":")
+        estimated_wait_time = int(minutes) * 60 + int(seconds) + 10
+        time.sleep(estimated_wait_time)
+        body = driver.find_element(By.TAG_NAME, "body")
+        body.send_keys(Keys.PAGE_UP)
+        body.send_keys(Keys.PAGE_DOWN)
+        body.send_keys(Keys.PAGE_DOWN)
+
+
+def __browserClose(driver: webdriver.Chrome):
     # driver.close()
     driver.quit()
 
 
-def __browserOpen(url="") -> webdriver.Firefox:
+def __browserOpen(url="") -> webdriver.Chrome:
     mode = os.environ.get("MODE", "developer")
     options = Options()
-    firefox_profile = FirefoxProfile()
-    firefox_profile.set_preference("javascript.enabled", mode == "product")
-    options.profile = firefox_profile
-    options.page_load_strategy = "none"
-    # options.add_argument("start-maximized")
-    # options.add_argument("enable-automation")
-    options.add_argument("-headless")
-    # options.add_argument("--headless")
-    # options.add_argument("--no-sandbox")
-    # options.add_argument("--disable-dev-shm-usage")
-    # options.add_argument("--disable-browser-side-navigation")
-    # options.add_argument("--disable-gpu")
-    # options.add_argument("--disable-infobars")
-    # options.add_argument("--new-window")
-    driver = webdriver.Firefox(options=options)
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()), options=options
+    )
     driver.implicitly_wait(2)
     if url:
         driver.get(url)
     return driver
+
+
+def __view_open(section):
+    try:
+        functions = {
+            "www.youtube.com": __view_www_youtube_com,
+            "www.facebook.com": __view_www_facebook_com,
+        }
+        function = functions[section]
+        return function
+    except:
+        return __view_do_nothing
+
+
+def __view_do_nothing(path):
+    return
