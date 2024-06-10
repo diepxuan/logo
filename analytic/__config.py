@@ -67,7 +67,10 @@ def __olded(path, scope="DEFAULT", days=1) -> bool:
 
 
 def valid(config: configparser.ConfigParser):
-    return url.valid(config["DEFAULT"]["url"])
+    try:
+        return url.valid(config["DEFAULT"]["url"])
+    except:
+        return False
 
 
 def remove(path):
