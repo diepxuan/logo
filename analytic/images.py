@@ -64,10 +64,29 @@ def __images_looking(path):
         and section in xpath.sections()
         and url.valid(cnf[section]["url"])
     ]:
-        print(section)
-        print(cnf[section]["url"])
-        # driver = __browserOpen()
-        # __browserClose(driver)
+
+        driver = __browserOpen(cnf[section]["url"])
+        print(f"search images from {cnf[section]['url']}")
+        wait = WebDriverWait(driver, 10)
+        match section:
+            case "shopee.vn":
+                print(xpath[section]["xpath"])
+                result = wait.until(
+                    EC.presence_of_element_located((By.XPATH, xpath[section]["xpath"]))
+                )
+                # result = driver.find_element(By.XPATH, "//div[@id='modal']")
+                # result = result[0].find_elements(By.TAG_NAME, "picture")
+                print(result)
+                for pic in result.find_elements(By.TAG_NAME, "picture"):
+                    print(pic)
+                    img = pic.find_element(By.TAG_NAME, "img")
+                    print(img.get_attribute("src"))
+                # result.find_elements(By.TAG_NAME, "img")
+                # img_url = result.get_attribute("src")
+                # print(img_url)
+        # print(cnf[section]["url"])
+        # print(xpath[section])
+        __browserClose(driver)
 
 
 def __images_looking2(driver: webdriver.Firefox, path):
@@ -165,7 +184,7 @@ def __browserClose(driver: webdriver.Firefox):
     driver.quit()
 
 
-def __browserOpen() -> webdriver.Firefox:
+def __browserOpen(url="") -> webdriver.Firefox:
     mode = os.environ.get("MODE", "developer")
     options = Options()
     firefox_profile = FirefoxProfile()
@@ -175,4 +194,6 @@ def __browserOpen() -> webdriver.Firefox:
     # options.add_argument("--new-window")
     driver = webdriver.Firefox(options=options)
     driver.implicitly_wait(2)
+    if url:
+        driver.get(url)
     return driver
