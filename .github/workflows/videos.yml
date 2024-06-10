@@ -10,12 +10,15 @@ on:
     # branches: [ "main" ]
   workflow_dispatch:
   schedule:
-    - cron: "*/20 * * * *"
+    - cron: "*/10 * * * *"
 
 jobs:
   videos:
-    runs-on: ubuntu-latest
-
+    runs-on: ${{matrix.operating-system}}
+    strategy:
+      fail-fast: false
+      matrix:
+        operating-system: [ubuntu-22.04, ubuntu-20.04]
     steps:
       - run: sudo timedatectl set-timezone Asia/Ho_Chi_Minh
       - uses: actions/checkout@v4
