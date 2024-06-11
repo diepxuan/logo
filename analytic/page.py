@@ -16,6 +16,7 @@ import __config as config
 domain = "www.diepxuan.com"
 lstPage = []
 lstExcept = [
+    "diepxuan.com/stores/store/redirect",
     "diepxuan.com/customer/account",
     "diepxuan.com/no-route",
     "diepxuan.com/checkout",
