@@ -107,6 +107,36 @@ def __images_open_nemgiakho_com(path):
         step_index += 1
 
 
+def __images_open_everonvn_com_vn(path):
+    global step_index
+    section = "everonvn.com.vn"
+    xpath = config.get()[section]["xpath"]
+    cnf = config.get(path)
+    url = cnf[section]["url"]
+    driver.get(url)
+    # driver.save_screenshot("screenshot.png")
+    try:
+        # container = driver.find_element(By.CSS_SELECTOR, ".category-description")
+        container = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, xpath))
+        )
+    except:
+        return
+
+    pics = container.find_elements(By.TAG_NAME, "img")
+    for pic in pics:
+        src = pic.get_attribute("src")
+        print(f"   * {src}")
+        filename = src.split("/")[-1]
+        if not filename or any(
+            char in filename for char in ["\\", "/", ":", "*", "?", '"', "<", ">", "|"]
+        ):
+            filename = f"{uuid.uuid4()}.jpg"
+        save_path = os.path.join(os.dirImg(path), filename)
+        urlretrieve(src, save_path)
+        step_index += 1
+
+
 def __images_open_everonhanquoc_vn(path):
     global step_index
     section = "everonhanquoc.vn"
@@ -212,6 +242,7 @@ def __images_open(section):
             "shopee.vn": __images_open_shopee_vn,
             "everonhanquoc.vn": __images_open_everonhanquoc_vn,
             "nemgiakho.com": __images_open_nemgiakho_com,
+            "everonvn.com.vn": __images_open_everonvn_com_vn,
         }
         function = functions[section]
         return function
