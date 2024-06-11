@@ -40,8 +40,8 @@ def __crawl():
     global lstPage, step_index
     print(f"{datetime.now()} Visited: {driver.title} - {driver.current_url}")
 
-    link = driver.current_url.split("#")[0].rstrip("/")
-    path = link.split("/")[-1].split(".")[0]
+    page_link = driver.current_url.split("#")[0].rstrip("/")
+    path = page_link.split("/")[-1].split(".")[0]
     if __productChecker():
         _config = config.get(path)
         _config["DEFAULT"]["url"] = f"{driver.current_url}"
@@ -49,7 +49,7 @@ def __crawl():
         if config.valid(_config):
             config.set(_config)
         step_index += 1
-        lstPage = lstPage + [link]
+        lstPage = lstPage + [page_link]
 
     if step_index > step_max:
         return
@@ -66,7 +66,7 @@ def __crawl():
         link = random.choice(links)
         href = __url(link.get_attribute("href"))
         try:
-            if href:
+            if href and href != page_link:
                 link.click()
                 time.sleep(2)
                 return __crawl()
