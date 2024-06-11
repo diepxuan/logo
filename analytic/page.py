@@ -59,12 +59,11 @@ def __crawl():
     )
     nav_link = driver.find_elements(By.CSS_SELECTOR, "nav.navigation a")
     prod_link = driver.find_elements(By.CSS_SELECTOR, "main.page-main a")
-    links = links + [_link for _link in list(set(prod_link))]
-    links = links + [_link for _link in list(set(nav_link))]
+    links = [_link for _link in prod_link] + [_link for _link in nav_link]
     links = [_link for _link in list(set(links))]
     random.shuffle(links)
 
-    while len(list(set(links))) > 0:
+    while len(links) > 0:
         link = random.choice(links)
         href = __url(link.get_attribute("href"))
         try:
