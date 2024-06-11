@@ -67,6 +67,7 @@ def __search_query(driver: webdriver.Firefox, path):
 
     # search by title
     search_xpath = "//textarea[@name='q']"
+    search_text = title.replace("x", random.choice(["*", " "]))
     search_field = wait.until(EC.presence_of_element_located((By.XPATH, search_xpath)))
     search_field.send_keys(title)
     search_field.send_keys(Keys.ENTER)
