@@ -38,11 +38,10 @@ path = url.split("/")[-1].split(".")[0]
 
 def __crawl():
     global lstPage, step_index
-    link = driver.current_url.split("#")[0].rstrip("/")
-    path = link.split("/")[-1].split(".")[0]
-    lstPage = lstPage + [link]
     print(f"{datetime.now()} Visited: {driver.title} - {driver.current_url}")
 
+    link = driver.current_url.split("#")[0].rstrip("/")
+    path = link.split("/")[-1].split(".")[0]
     if __productChecker():
         _config = config.get(path)
         _config["DEFAULT"]["url"] = f"{driver.current_url}"
@@ -50,6 +49,7 @@ def __crawl():
         if config.valid(_config):
             config.set(_config)
         step_index += 1
+        lstPage = lstPage + [link]
 
     if step_index > step_max:
         return
@@ -59,10 +59,12 @@ def __crawl():
     )
     nav_link = driver.find_elements(By.CSS_SELECTOR, "nav.navigation a")
     prod_link = driver.find_elements(By.CSS_SELECTOR, "main.page-main a")
-    links = [_link for _link in list(set(prod_link))]
+    links = links + [_link for _link in list(set(prod_link))]
+    links = links + [_link for _link in list(set(nav_link))]
+    links = [_link for _link in list(set(links))]
     random.shuffle(links)
 
-    while True:
+    while len(list(set(links))) > 0:
         link = random.choice(links)
         href = __url(link.get_attribute("href"))
         try:
@@ -73,8 +75,6 @@ def __crawl():
         except:
             pass
         links.remove(link)
-        if len(links) == 0:
-            links = [_link for _link in list(set(nav_link))]
 
 
 def crawl():
