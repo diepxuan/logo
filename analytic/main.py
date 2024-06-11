@@ -16,18 +16,14 @@ import __os as os
 import search
 import images
 import videos
-from page import Page
-
-
-def crawl():
-    Page(url=f"https://www.diepxuan.com").crawl()
+import page
 
 
 def run_as_type():
     _type = os.environ.get("TYPE", "crawl")
     match _type:
         case "crawl":
-            Page(url=f"https://www.diepxuan.com").crawl()
+            page.crawl()
         case "images":
             images.crawl()
         case "search":
@@ -35,7 +31,7 @@ def run_as_type():
         case "videos":
             videos.crawl()
         case _:
-            Page(url=f"https://www.diepxuan.com").crawl()
+            page.crawl()
 
 
 if __name__ == "__main__":

@@ -230,9 +230,9 @@ def __browserOpen(url="") -> webdriver.Chrome:
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()), options=options
     )
+    driver.implicitly_wait(2)
     if url:
         driver.get(url)
-        driver.implicitly_wait(2)
     return driver
 
 
