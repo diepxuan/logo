@@ -1,11 +1,13 @@
 import time
 import configparser
 import random
+import uuid
 
 from selenium import webdriver
 from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
+    TimeoutException,
     ElementClickInterceptedException,
 )
 from selenium.webdriver.chrome.options import Options
@@ -19,6 +21,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from urllib.parse import urlparse, unquote
 from unidecode import unidecode
 from datetime import datetime, timedelta
+from urllib.request import urlretrieve
 
 import __string as string
 import __os as os
@@ -70,15 +73,50 @@ def __images_looking(path):
         __images_open(section)(path)
 
 
+def __images_open_everonhanquoc_vn(path):
+    section = "everonhanquoc.vn"
+    xpath = config.get()[section]["xpath"]
+    cnf = config.get(path)
+    url = cnf[section]["url"]
+    driver.get(url)
+    # driver.save_screenshot("screenshot.png")
+    try:
+        # container = driver.find_element(By.CSS_SELECTOR, ".category-description")
+        container = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, ".category-description"))
+        )
+    except:
+        container = None
+    try:
+        if not container:
+            # container = driver.find_element(By.CSS_SELECTOR, ".product-content")
+            container = WebDriverWait(driver, 10).until(
+                EC.presence_of_element_located((By.CSS_SELECTOR, ".product-content"))
+            )
+    except:
+        return
+    pics = container.find_elements(By.TAG_NAME, "img")
+    for pic in pics:
+        src = pic.get_attribute("src")
+        filename = src.split("/")[-1]
+        if not filename or any(
+            char in filename for char in ["\\", "/", ":", "*", "?", '"', "<", ">", "|"]
+        ):
+            filename = f"{uuid.uuid4()}.jpg"
+        save_path = os.path.join(os.dirImg(path), filename)
+        urlretrieve(src, save_path)
+
+
 def __images_open_shopee_vn(path):
+    return
     section = "shopee.vn"
     xpath = config.get()[section]["xpath"]
     cnf = config.get(path)
     url = cnf[section]["url"]
     print(f"search images from {url}")
-    print(xpath)
     driver.get(url)
-    # time.sleep(5)
+    time.sleep(5)
+    # driver.save_screenshot("screenshot.png")
     # body = driver.find_element(By.TAG_NAME, "body")
     wait = WebDriverWait(driver, 10)
     # result = wait.until(EC.presence_of_element_located((By.ID, "modal")))
@@ -86,110 +124,29 @@ def __images_open_shopee_vn(path):
     # result = wait.until(
     #     EC.presence_of_element_located((By.XPATH, '//div[@id="modal"]'))
     # )
-    pics = result.find_elements(By.TAG_NAME, "picture")
+    # pics = driver.find_elements_by_css_selector(
+    #     "#modal .shopee-image-container picture img"
+    # )
+    pics = result.find_elements(
+        By.CSS_SELECTOR, "#modal .shopee-image-container picture img"
+    )
+    # pics = result.find_elements(By.TAG_NAME, "picture")
     # result = driver.find_element(By.ID, "modal")
     # result = result[0].find_elements(By.TAG_NAME, "picture")
     # html_content = result.get_attribute("innerHTML")
     # print(html_content)
     # return
-    # print(pics)
-    for pic in result.find_elements(By.TAG_NAME, "picture"):
+    print(pics)
+    # for pic in result.find_elements(By.TAG_NAME, "picture"):
+    for pic in pics:
         print(pic)
-        img = pic.find_element(By.TAG_NAME, "img")
-        print(img.get_attribute("src"))
+        # img = pic.find_element(By.TAG_NAME, "img")
+        print(pic.get_attribute("src"))
     # result.find_elements(By.TAG_NAME, "img")
     # img_url = result.get_attribute("src")
     # print(img_url)
-
-
-def __images_looking2(driver: webdriver.Chrome, path):
-    global step_index
-
-    title = path.replace("-", " ")
-    print(f"Looking images for {title}")
-
-    driver.get("https://www.google.com/")
-    wait = WebDriverWait(driver, 10)
-
-    cnf = config.get(path)
-    if not cnf.has_section("search"):
-        cnf.add_section("search")
-    cnf["search"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    config.set(cnf)
-    step_index += 1
-
-    # search by title
-    search_xpath = "//textarea[@name='q']"
-    search_field = wait.until(EC.presence_of_element_located((By.XPATH, search_xpath)))
-    search_field.send_keys(title)
-    search_field.send_keys(Keys.ENTER)
-
-    # filter DOM for search result
-    result_xpath = "//div[@id='search']/div/div/div"
-    search_results = wait.until(EC.presence_of_element_located((By.ID, "search")))
-    body = driver.find_element(By.TAG_NAME, "body")
-    for i in range(5):
-        body.send_keys(Keys.PAGE_DOWN)
-        body.send_keys(Keys.PAGE_DOWN)
-        body.send_keys(Keys.PAGE_DOWN)
-        time.sleep(1)
-    search_results = driver.find_elements(By.XPATH, result_xpath)
-    match_percent = 0
-    match_element = None
-    for search_result in [
-        search_result
-        for search_result in search_results
-        if len(search_result.text.strip()) > 0
-    ]:
-        try:
-            search_element = search_result.find_element(By.TAG_NAME, "a")
-            search_url = search_element.get_attribute("href")
-            search_domain = urlparse(search_url).netloc
-            search_title = search_result.find_element(By.TAG_NAME, "h3").text
-            search_text = search_result.find_element(By.TAG_NAME, "cite").text
-            search_match = levenshtein.percentage(
-                unidecode(search_title).lower(), title
-            )
-            search_match_txt = "{:.1f}%".format(search_match)
-
-            # show result
-            print(f" * {search_match_txt} {search_title}")
-            print(f"   - {search_text}")
-            print(f"   - {search_url}")
-
-            # save config to search images
-            if not cnf.has_section(search_domain):
-                cnf.add_section(search_domain)
-            cnf[search_domain]["match"] = f"{'{:.1f}%%'.format(search_match)}"
-            cnf[search_domain]["title"] = f"{unquote(search_title).replace('%','%%')}"
-            cnf[search_domain]["url"] = f"{unquote(search_url)}"
-            config.set(cnf)
-
-            # note match to go into
-            if match_percent < search_match:
-                match_percent = search_match
-                match_element = search_element
-
-        except NoSuchElementException:
-            continue
-        except StaleElementReferenceException:
-            continue
-
-    if match_percent < 70:
-        return
-    try:
-        driver.execute_script("arguments[0].scrollIntoView(true);", match_element)
-        match_element.click()
-        time.sleep(1)
-        body = driver.find_element(By.TAG_NAME, "body")
-        body.send_keys(Keys.PAGE_DOWN)
-        body.send_keys(Keys.PAGE_DOWN)
-        body.send_keys(Keys.PAGE_DOWN)
-        match_element = random.choice(driver.find_elements(By.TAG_NAME, "a"))
-        match_element.click()
-        time.sleep(1)
-    except:
-        return
+    # driver.close()
+    # driver.n
 
 
 def __browserClose(driver: webdriver.Chrome):
@@ -206,15 +163,18 @@ def __browserOpen(url="") -> webdriver.Chrome:
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()), options=options
     )
-    driver.implicitly_wait(2)
     if url:
         driver.get(url)
+        driver.implicitly_wait(2)
     return driver
 
 
 def __images_open(section):
     try:
-        functions = {"shopee.vn": __images_open_shopee_vn}
+        functions = {
+            "shopee.vn": __images_open_shopee_vn,
+            "everonhanquoc.vn": __images_open_everonhanquoc_vn,
+        }
         function = functions[section]
         return function
     except:
