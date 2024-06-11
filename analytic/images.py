@@ -61,6 +61,7 @@ def __images_init(path):
 
 
 def __images_looking(path):
+    global step_index
     xpath = config.get()
     cnf = config.get(path)
     for section in [
@@ -71,6 +72,7 @@ def __images_looking(path):
         and url.valid(cnf[section]["url"])
     ]:
         __images_open(section)(path)
+        step_index += 1
 
 
 def __images_open_everonhanquoc_vn(path):
