@@ -43,11 +43,9 @@ def crawl():
     """product images searching"""
     global driver
     driver = __browserOpen()
-    for item in [
-        item
-        for item in random.shuffle(os.listdir(os.dirImg()))
-        if os.path.isdir(os.dirImg(item))
-    ]:
+    paths = os.listdir(os.dirImg())
+    random.shuffle(paths)
+    for item in [item for item in paths if os.path.isdir(os.dirImg(item))]:
         __images_init(item)
     __browserClose(driver)
 
@@ -63,7 +61,6 @@ def __images_init(path):
 
 
 def __images_looking(path):
-    global step_index
     xpath = config.get()
     cnf = config.get(path)
     for section in [
@@ -73,11 +70,15 @@ def __images_looking(path):
         and section in xpath.sections()
         and url.valid(cnf[section]["url"])
     ]:
+        _url = cnf[section]["url"]
+        print(f"search [{path}] images")
+        print(f"  from [{section}]")
+        print(f"  over {_url}")
         __images_open(section)(path)
-        step_index += 1
 
 
 def __images_open_everonhanquoc_vn(path):
+    global step_index
     section = "everonhanquoc.vn"
     xpath = config.get()[section]["xpath"]
     cnf = config.get(path)
@@ -102,6 +103,7 @@ def __images_open_everonhanquoc_vn(path):
     pics = container.find_elements(By.TAG_NAME, "img")
     for pic in pics:
         src = pic.get_attribute("src")
+        print(f"   * {src}")
         filename = src.split("/")[-1]
         if not filename or any(
             char in filename for char in ["\\", "/", ":", "*", "?", '"', "<", ">", "|"]
@@ -109,6 +111,7 @@ def __images_open_everonhanquoc_vn(path):
             filename = f"{uuid.uuid4()}.jpg"
         save_path = os.path.join(os.dirImg(path), filename)
         urlretrieve(src, save_path)
+        step_index += 1
 
 
 def __images_open_shopee_vn(path):

@@ -30,11 +30,9 @@ step_index = 0
 
 def crawl():
     """searching another page about product"""
-    for item in [
-        item
-        for item in random.shuffle(os.listdir(os.dirImg()))
-        if os.path.isdir(os.dirImg(item))
-    ]:
+    paths = os.listdir(os.dirImg())
+    random.shuffle(paths)
+    for item in [item for item in paths if os.path.isdir(os.dirImg(item))]:
         __search_init(item)
 
 
@@ -102,9 +100,9 @@ def __search_query(driver: webdriver.Firefox, path):
             search_match_txt = "{:.1f}%".format(search_match)
 
             # show result
-            print(f" * {search_match_txt} {search_title}")
-            print(f"   - {search_text}")
-            print(f"   - {search_url}")
+            print(f"* {search_match_txt} {search_title}")
+            print(f"    {search_text}")
+            print(f"    {search_url}")
 
             # save config to search images
             if not cnf.has_section(search_domain):
