@@ -44,7 +44,9 @@ def crawl():
     global driver
     driver = __browserOpen()
     for item in [
-        item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
+        item
+        for item in random.shuffle(os.listdir(os.dirImg()))
+        if os.path.isdir(os.dirImg(item))
     ]:
         __images_init(item)
     __browserClose(driver)

@@ -31,7 +31,9 @@ step_index = 0
 def crawl():
     """searching another page about product"""
     for item in [
-        item for item in os.listdir(os.dirImg()) if os.path.isdir(os.dirImg(item))
+        item
+        for item in random.shuffle(os.listdir(os.dirImg()))
+        if os.path.isdir(os.dirImg(item))
     ]:
         __search_init(item)
 

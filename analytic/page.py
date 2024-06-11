@@ -1,5 +1,6 @@
 import time
 import configparser
+import random
 
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -65,7 +66,7 @@ class Page:
             if url and url not in lstPage:
                 links = links + [url]
         self.browserClose()
-        return list(set(links))
+        return list(set(random.shuffle(links)))
 
     def crawl(self):
         for url in [url for url in self.links() if url not in lstPage]:
