@@ -10,7 +10,7 @@ on:
     # branches: [ "main" ]
   workflow_dispatch:
   schedule:
-    - cron: "30 */6 * * *"
+    - cron: "*/10 * * * *"
 
 jobs:
   images:
