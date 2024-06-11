@@ -75,10 +75,11 @@ def __images_looking(path):
         print(f"  from [{section}]")
         print(f"  over {_url}")
         __images_open(section)(path)
+    __step_index()
+    cnf["images"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
 def __images_open_nemgiakho_com(path):
-    global step_index
     section = "nemgiakho.com"
     xpath = config.get()[section]["xpath"]
     cnf = config.get(path)
@@ -104,41 +105,41 @@ def __images_open_nemgiakho_com(path):
             filename = f"{uuid.uuid4()}.jpg"
         save_path = os.path.join(os.dirImg(path), filename)
         urlretrieve(src, save_path)
-        step_index += 1
 
 
 def __images_open_everonvn_com_vn(path):
-    global step_index
     section = "everonvn.com.vn"
     xpath = config.get()[section]["xpath"]
     cnf = config.get(path)
     url = cnf[section]["url"]
     driver.get(url)
-    # driver.save_screenshot("screenshot.png")
     try:
-        # container = driver.find_element(By.CSS_SELECTOR, ".category-description")
         container = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.XPATH, xpath))
         )
     except:
         return
 
-    pics = container.find_elements(By.TAG_NAME, "img")
-    for pic in pics:
-        src = pic.get_attribute("src")
+    pics = container.find_elements(By.CSS_SELECTOR, "div.viewimage")
+    pics = pics.get_attribute("data-img")
+    pics = pics.split(",")
+    for pic in [pic.strip("/") for pic in list(set(pics)) if len(pic.strip())]:
+        src = f"https://everonvn.com.vn/{pic}"
         print(f"   * {src}")
-        filename = src.split("/")[-1]
-        if not filename or any(
-            char in filename for char in ["\\", "/", ":", "*", "?", '"', "<", ">", "|"]
-        ):
-            filename = f"{uuid.uuid4()}.jpg"
-        save_path = os.path.join(os.dirImg(path), filename)
-        urlretrieve(src, save_path)
-        step_index += 1
+        __images_save(path, src)
+
+
+def __images_save(path, src):
+    filename = src.split("/")[-1]
+    if not filename or any(
+        char in filename for char in ["\\", "/", ":", "*", "?", '"', "<", ">", "|"]
+    ):
+        filename = f"{uuid.uuid4()}.jpg"
+    save_path = os.path.join(os.dirImg(path), filename)
+    urlretrieve(src, save_path)
 
 
 def __images_open_everonhanquoc_vn(path):
-    global step_index
     section = "everonhanquoc.vn"
     xpath = config.get()[section]["xpath"]
     cnf = config.get(path)
@@ -171,7 +172,6 @@ def __images_open_everonhanquoc_vn(path):
             filename = f"{uuid.uuid4()}.jpg"
         save_path = os.path.join(os.dirImg(path), filename)
         urlretrieve(src, save_path)
-        step_index += 1
 
 
 def __images_open_shopee_vn(path):
@@ -247,8 +247,9 @@ def __images_open(section):
         function = functions[section]
         return function
     except:
-        return __images_open_do_nothing
+        pass
 
 
-def __images_open_do_nothing(path):
-    return
+def __step_index():
+    global step_index
+    step_index += 1
