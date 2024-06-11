@@ -76,6 +76,8 @@ def __images_looking(path):
         print(f"  over {_url}")
         __images_open(section)(path)
     __step_index()
+    if not cnf.has_section("images"):
+        config.add_section("images")
     cnf["images"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
