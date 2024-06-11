@@ -59,9 +59,8 @@ def __crawl():
     )
     nav_link = driver.find_elements(By.CSS_SELECTOR, "nav.navigation a")
     prod_link = driver.find_elements(By.CSS_SELECTOR, "main.page-main a")
-    links = [_link for _link in prod_link] + [_link for _link in nav_link]
+    links = [_link for _link in prod_link]
     links = [_link for _link in list(set(links))]
-    random.shuffle(links)
 
     while len(links) > 0:
         link = random.choice(links)
@@ -74,6 +73,8 @@ def __crawl():
         except:
             pass
         links.remove(link)
+    random.choice(nav_link).click()
+    time.sleep(2)
 
 
 def crawl():
