@@ -52,8 +52,8 @@ def crawl():
 
 def __images_init(path):
     if step_index > step_max:
-        pass
-        # return
+        # pass
+        return
     if not config.isImagesOld(path):
         return
     if not config.valid(config.get(path)):
@@ -76,7 +76,7 @@ def __images_looking(path):
         print(f"  from [{section}]")
         print(f"  over {_url}")
         __images_open(section)(path)
-    __step_index()
+    # __step_index()
     if not cnf.has_section("images"):
         cnf.add_section("images")
     cnf["images"]["lastSearch"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -140,6 +140,7 @@ def __images_save(path, src):
         filename = f"{uuid.uuid4()}.jpg"
     save_path = os.path.join(os.dirImg(path), filename)
     urlretrieve(src, save_path)
+    __step_index()
 
 
 def __images_open_everonhanquoc_vn(path):
