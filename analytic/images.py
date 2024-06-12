@@ -52,7 +52,8 @@ def crawl():
 
 def __images_init(path):
     if step_index > step_max:
-        return
+        pass
+        # return
     if not config.isImagesOld(path):
         return
     if not config.valid(config.get(path)):
