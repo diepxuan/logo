@@ -123,7 +123,7 @@ def __images_open_everonvn_com_vn(path):
     except:
         return
 
-    pics = container.find_elements(By.CSS_SELECTOR, "div.viewimage")
+    pics = container.find_element(By.CSS_SELECTOR, "div.viewimage")
     pics = pics.get_attribute("data-img")
     pics = pics.split(",")
     for pic in [pic.strip("/") for pic in list(set(pics)) if len(pic.strip())]:
