@@ -159,7 +159,9 @@ def __images_open_everonhanquoc_vn(path):
         if not container:
             # container = driver.find_element(By.CSS_SELECTOR, ".product-content")
             container = WebDriverWait(driver, 10).until(
-                EC.presence_of_element_located((By.CSS_SELECTOR, ".product-content"))
+                EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, ".product-content .detail")
+                )
             )
     except:
         return
@@ -167,13 +169,7 @@ def __images_open_everonhanquoc_vn(path):
     for pic in pics:
         src = pic.get_attribute("src")
         print(f"   * {src}")
-        filename = src.split("/")[-1]
-        if not filename or any(
-            char in filename for char in ["\\", "/", ":", "*", "?", '"', "<", ">", "|"]
-        ):
-            filename = f"{uuid.uuid4()}.jpg"
-        save_path = os.path.join(os.dirImg(path), filename)
-        urlretrieve(src, save_path)
+        __images_save(path, src)
 
 
 def __images_open_shopee_vn(path):
