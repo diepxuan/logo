@@ -114,7 +114,7 @@ def __search_query(driver: webdriver.Firefox, path):
             config.set(cnf)
 
             # note match to go into
-            if match_percent < search_match:
+            if match_percent < search_match and search_domain == 'diepxuan.com':
                 match_percent = search_match
                 match_element = search_element
 
@@ -128,14 +128,14 @@ def __search_query(driver: webdriver.Firefox, path):
     try:
         driver.execute_script("arguments[0].scrollIntoView(true);", match_element)
         match_element.click()
-        time.sleep(3)
+        time.sleep(5)
         body = driver.find_element(By.TAG_NAME, "body")
         body.send_keys(Keys.PAGE_DOWN)
         body.send_keys(Keys.PAGE_DOWN)
         body.send_keys(Keys.PAGE_DOWN)
         match_element = random.choice(driver.find_elements(By.TAG_NAME, "a"))
         match_element.click()
-        time.sleep(3)
+        time.sleep(5)
     except:
         return
 
