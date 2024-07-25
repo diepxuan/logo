@@ -54,7 +54,7 @@ def __crawl():
     if step_index > step_max:
         return
 
-    WebDriverWait(driver, 2).until(
+    WebDriverWait(driver, 5).until(
         EC.presence_of_element_located((By.TAG_NAME, "main"))
     )
     nav_link = driver.find_elements(By.CSS_SELECTOR, "nav.navigation a")
@@ -68,13 +68,13 @@ def __crawl():
         try:
             if href and href != page_link:
                 link.click()
-                time.sleep(2)
+                time.sleep(10)
                 return __crawl()
         except:
             pass
         links.remove(link)
     driver.find_element(By.CSS_SELECTOR, "a.logo").click()
-    time.sleep(2)
+    time.sleep(10)
 
 
 def crawl():
@@ -117,7 +117,7 @@ def __browserOpen():
     driver = webdriver.Chrome(
         service=Service(ChromeDriverManager().install()), options=options
     )
-    driver.implicitly_wait(2)
+    driver.implicitly_wait(5)
     return driver
 
 
