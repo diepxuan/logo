@@ -80,7 +80,7 @@ def __search_query(driver: webdriver.Firefox, path):
         body.send_keys(Keys.PAGE_DOWN)
         body.send_keys(Keys.PAGE_DOWN)
         body.send_keys(Keys.PAGE_DOWN)
-        time.sleep(1)
+        time.sleep(3)
     search_results = driver.find_elements(By.XPATH, result_xpath)
     match_percent = 0
     match_element = None
@@ -128,14 +128,14 @@ def __search_query(driver: webdriver.Firefox, path):
     try:
         driver.execute_script("arguments[0].scrollIntoView(true);", match_element)
         match_element.click()
-        time.sleep(1)
+        time.sleep(3)
         body = driver.find_element(By.TAG_NAME, "body")
         body.send_keys(Keys.PAGE_DOWN)
         body.send_keys(Keys.PAGE_DOWN)
         body.send_keys(Keys.PAGE_DOWN)
         match_element = random.choice(driver.find_elements(By.TAG_NAME, "a"))
         match_element.click()
-        time.sleep(1)
+        time.sleep(3)
     except:
         return
 
