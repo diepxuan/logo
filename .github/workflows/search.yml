@@ -14,7 +14,14 @@ on:
 
 jobs:
   search:
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: ${{matrix.operating-system}}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        # operating-system: [ubuntu-latest]
+        operating-system: [ubuntu-latest, debian12x64, debian11x64]
 
     steps:
       - run: sudo timedatectl set-timezone Asia/Ho_Chi_Minh
