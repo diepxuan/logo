@@ -45,6 +45,13 @@ jobs:
           GIT_COMMITTER_NAME: ${{ github.repository_owner }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+      - name: Setup GPG
+        uses: diepxuan/.github/.github/actions/gpg-setup@main
+        with:
+          gpg_key: ${{ secrets.GPG_KEY }}
+          gpg_key_id: ${{ secrets.GPG_KEY_ID }}
+          committer_email: ${{ secrets.GIT_COMMITTER_EMAIL }}
+          committer_name: ${{ github.repository_owner }}
       - name: Push repository
         if: false
         run: |

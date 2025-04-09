@@ -28,6 +28,7 @@ jobs:
       - run: bash .github/ci/requirements.sh
       - run: bash .github/ci/images.sh
       - name: Git configuration
+        if: false
         run: |
           echo "$GPG_KEY====" | tr -d '\n' | fold -w 4 | sed '$ d' | tr -d '\n' | fold -w 76 | base64 -di | gpg --batch --import || true
           gpg --list-secret-keys --keyid-format=long
@@ -40,6 +41,13 @@ jobs:
           GIT_COMMITTER_NAME: ${{ github.repository_owner }}
           GPG_KEY: ${{ secrets.GPG_KEY }}
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
+      - name: Setup GPG
+        uses: diepxuan/.github/.github/actions/gpg-setup@main
+        with:
+          gpg_key: ${{ secrets.GPG_KEY }}
+          gpg_key_id: ${{ secrets.GPG_KEY_ID }}
+          committer_email: ${{ secrets.GIT_COMMITTER_EMAIL }}
+          committer_name: ${{ github.repository_owner }}
       - name: Push repository
         run: |
           if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
