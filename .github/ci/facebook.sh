@@ -10,6 +10,8 @@ set -e
 
 curl -fsSL https://tailscale.com/install.sh | sh && sudo tailscale up --auth-key=${TS_OAUTH_SECRET} --accept-dns=true --accept-routes=true
 tailscale status
+ip a
+ip r
 
 nslookup ${DB_HOST} 10.10.1.253 || true
 nslookup ${DB_HOST} 100.100.100.100 || true
