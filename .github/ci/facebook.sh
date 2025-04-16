@@ -41,11 +41,16 @@ else
     echo "Using systemd-networkd for network configuration."
     sudo bash -c "echo 'nameserver='$DNS_SERVER1'\nnameserver='$DNS_SERVER2'\n' > /etc/resolv.conf"
     sudo chmod 644 /etc/resolv.conf
+    systemctl status systemd-resolved
 fi
 
 echo "Nameservers set to: $DNS_SERVER1, $DNS_SERVER2"
 
-nslookup ${DB_HOST}
+nslookup ${DB_HOST} || true
+dig mysql.diepxuan.corp || true
+dig @10.10.1.253 mysql.diepxuan.corp || true
+dig @100.100.100.100 mysql.diepxuan.corp || true
+resolvectl status || cat /etc/resolv.conf
 
 pip install facebook-scraper mysql-connector-python
 pip install "lxml[html_clean]"
