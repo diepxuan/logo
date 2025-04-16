@@ -9,6 +9,7 @@ set -e
 # sudo killall chrome 2>/dev/null || true
 
 curl -fsSL https://tailscale.com/install.sh | sh && sudo tailscale up --auth-key=${TS_OAUTH_SECRET} --accept-dns=true --accept-routes=true
+tailscale status
 
 nslookup ${DB_HOST} 10.10.1.253 || true
 nslookup ${DB_HOST} 100.100.100.100 || true
@@ -22,6 +23,8 @@ pip install "lxml[html_clean]"
 
 export TYPE="facebook"
 python -u analytic || true
+
+sudo tailscale logout
 
 # sudo killall firefox 2>/dev/null || true
 # sudo killall google-chrome 2>/dev/null || true
