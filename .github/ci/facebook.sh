@@ -8,7 +8,7 @@ set -e
 # sudo killall google-chrome 2>/dev/null || true
 # sudo killall chrome 2>/dev/null || true
 
-curl -fsSL https://tailscale.com/install.sh | sh && sudo tailscale up --auth-key=${TS_OAUTH_SECRET} --advertise-tags=tag:github-actions
+curl -fsSL https://tailscale.com/install.sh | sh && sudo tailscale up --auth-key=${TS_OAUTH_SECRET}
 nslookup ${DB_HOST} || true
 
 pip install facebook-scraper mysql-connector-python
