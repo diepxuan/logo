@@ -12,6 +12,8 @@ curl -fsSL https://tailscale.com/install.sh | sh && sudo tailscale up --auth-key
 nslookup ${DB_HOST} || true
 
 pip install facebook-scraper mysql-connector-python
+pip install "lxml[html_clean]"
+
 export TYPE="facebook"
 python -u analytic || true
 
