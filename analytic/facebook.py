@@ -4,7 +4,7 @@ import mysql.connector
 import __os as os
 
 # Cấu hình
-FB_PAGE = "Everonpage"  # Thay bằng page bạn cần lấy
+FB_PAGE = 520269781358721  # Thay bằng page bạn cần lấy
 NUM_PAGES = 5
 
 # db = mysql.connector.connect(
