@@ -27,6 +27,9 @@ def crawl():
     #     );
     # """)
 
+    for post in get_posts(FB_PAGE, pages=NUM_PAGES, extra_info=True):
+        print(post)
+
     for post in get_posts(FB_PAGE, pages=NUM_PAGES):
         post_id = post.get("post_id")
         text = post.get("text", "")[:1000]
