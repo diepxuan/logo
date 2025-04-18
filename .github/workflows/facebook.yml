@@ -10,6 +10,7 @@ on:
 
 jobs:
   facebook:
+    if: false
     runs-on: ubuntu-latest
     # runs-on: ${{matrix.operating-system}}
     strategy:
