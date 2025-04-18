@@ -5,7 +5,7 @@ import __os as os
 
 # Cấu hình
 FB_PAGE = "Everonpage"  # Thay bằng page bạn cần lấy
-NUM_PAGES = 1
+NUM_PAGES = 5
 
 # db = mysql.connector.connect(
 #     host=os.environ.get("DB_HOST", "mysql.diepxuan.corp"),
