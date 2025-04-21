@@ -3,21 +3,18 @@
 # { pkgs ? import <nixpkgs> {} }:
 { pkgs, ... }: {
   # Which nixpkgs channel to use.
-  channel = "stable-24.05"; # or "unstable"
+  channel = "stable-24.11"; # or "unstable"
 
   # Use https://search.nixos.org/packages to find packages
   packages = [
-    # pkgs.go
-    pkgs.python311
-    pkgs.python311Packages.pip
-    pkgs.python311Packages.selenium
-    pkgs.python311Packages.levenshtein
-    pkgs.python311Packages.unidecode
-    pkgs.python311Packages.webdriver-manager
-    # pkgs.nodejs_20
-    # pkgs.nodePackages.nodemon
-    # pkgs.python3
-    # pkgs.python3Packages.pip
+    (pkgs.python311.withPackages (ps: with ps; [
+      pip
+      selenium
+      webdriver-manager
+      levenshtein
+      unidecode
+    ]))
+    pkgs.firefox
   ];
 
   # Sets environment variables in the workspace

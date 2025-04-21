@@ -114,7 +114,7 @@ def __search_query(driver: webdriver.Firefox, path):
             config.set(cnf)
 
             # note match to go into
-            if match_percent < search_match and search_domain == 'diepxuan.com':
+            if match_percent < search_match and search_domain == "diepxuan.com":
                 match_percent = search_match
                 match_element = search_element
 
