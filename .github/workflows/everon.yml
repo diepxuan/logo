@@ -1,8 +1,9 @@
-name: analytic
+name: everon
 on:
   push:
     branches: [ "main" ]
     paths:
+      - '.github/workflows/everon.yml'
       - 'analytic/__**'
       - 'analytic/main.py'
       - 'analytic/everon.py'
@@ -13,7 +14,7 @@ on:
     - cron: "*/20 * * * *"
 
 jobs:
-  analytic:
+  everon:
     runs-on: ubuntu-latest
     # runs-on: ${{matrix.operating-system}}
     
