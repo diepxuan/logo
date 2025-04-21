@@ -4,17 +4,8 @@
 import importlib
 import __os as os
 
-MODULES = {
-    "crawl": "page",
-    "images": "images",
-    "search": "search",
-    "videos": "videos",
-    "facebook": "facebook"
-}
-
 def run_as_type():
-    _type = os.environ.get("TYPE", "crawl")
-    module_name = MODULES.get(_type, "page")
+    module_name = os.environ.get("TYPE", "page")
 
     try:
         module = importlib.import_module(module_name)

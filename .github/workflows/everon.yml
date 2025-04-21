@@ -5,7 +5,7 @@ on:
     paths:
       - 'analytic/__**'
       - 'analytic/main.py'
-      - 'analytic/page.py'
+      - 'analytic/everon.py'
   pull_request:
     # branches: [ "main" ]
   workflow_dispatch:
@@ -31,7 +31,15 @@ jobs:
           python-version: '3.10' 
           cache: 'pip'
       - run: bash .github/ci/requirements.sh
-      - run: bash .github/ci/analytic.sh
+      - run: |
+          sudo killall firefox 2>/dev/null || true
+          sudo killall google-chrome 2>/dev/null || true
+          sudo killall chrome 2>/dev/null || true
+          python -u analytic || true
+        shell: bash
+        env:
+          MODE: product
+          TYPE: everon
       - name: Setup GPG
         uses: diepxuan/.github/.github/actions/gpg-setup@main
         with:
