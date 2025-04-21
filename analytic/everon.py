@@ -65,6 +65,7 @@ def __crawl():
     print(f"{datetime.now()} Visited: {driver.title} - {driver.current_url}")
     page_link = driver.current_url.split("#")[0].rstrip("/")
     # path = page_link.split("/")[-1].split(".")[0]
+    visited_pages.add(page_link)
 
     # cho page loaded
     WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "app")))
@@ -78,7 +79,6 @@ def __crawl():
             _save_product_detail(sku, page_link)
 
         step_index += 1
-        visited_pages.add(page_link)
 
     if step_index > step_max:
         return
