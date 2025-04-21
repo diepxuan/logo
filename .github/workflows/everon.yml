@@ -49,11 +49,11 @@ jobs:
           committer_name: ${{ github.repository_owner }}
       - name: Push repository
         run: |
-          if [ "$(git status images/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
+          if [ "$(git status data/ --porcelain=v1 2>/dev/null | wc -l)" != "0" ]; then
             # git checkout -b ci
-            git add images/
-            git commit -m "CI images update"
-            # git commit -m "Update images at $(date +'%d-%m-%y')"
+            git add data/
+            git commit -m "CI data update"
+            # git commit -m "Update data at $(date +'%d-%m-%y')"
             git fetch -ap
             # git branch --set-upstream-to origin/ci ci
             git pull --rebase -X ours
