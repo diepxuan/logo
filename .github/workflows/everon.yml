@@ -12,9 +12,10 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "*/20 * * * *"
-  concurrency:
-    group: everon-crawler
-    cancel-in-progress: false
+
+concurrency:
+  group: everon-crawler
+  cancel-in-progress: false
 
 jobs:
   everon:
