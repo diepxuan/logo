@@ -24,6 +24,17 @@ def dirImg(_path="", make=False):
     return imgPath
 
 
+def dirData(_path=""):
+    dataPath = dirRoot("data")
+    if not path.exists(dataPath):
+        makedirs(dataPath)
+    if _path:
+        dataPath = path.join(dataPath, _path)
+        if not path.exists(dataPath):
+            makedirs(dataPath, True )
+    return dataPath
+
+
 def dirVids(_path="", make=False):
     imgPath = dirRoot("videos")
     if not path.exists(imgPath):

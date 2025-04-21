@@ -21,8 +21,9 @@ import __url as Url
 
 
 domain = "everon.com"
-lstPage = []
-lstExcept = [
+base_url = f"https://{domain}/"
+visited_pages = []
+excluded_pages = [
     "https://everon.com/faq",
     "https://everon.com/contact",
     "https://everon.com/privacy-policy",
@@ -34,24 +35,28 @@ lstExcept = [
 step_max = 5000
 step_index = 0
 driver: webdriver.Chrome = None
-url = f"https://{domain}/"
-path = url.split("/")[-1].split(".")[0]
+
+config_file = os.path.join(os.dirData(), "config.ini")
+product_config = configparser.ConfigParser()
+product_config.read(config_file)
+if "products" not in product_config:
+    product_config["products"] = {}
 
 
 def __crawl():
-    global lstPage, step_index
+    global step_index, driver
     print(f"{datetime.now()} Visited: {driver.title} - {driver.current_url}")
 
     page_link = driver.current_url.split("#")[0].rstrip("/")
-    path = page_link.split("/")[-1].split(".")[0]
-    if __productChecker():
-        _config = config.get(path)
-        _config["DEFAULT"]["url"] = f"{driver.current_url}"
-        _config["DEFAULT"]["lastOpen"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if config.valid(_config):
-            config.set(_config)
+    # path = page_link.split("/")[-1].split(".")[0]
+    if _is_product_page():
+        sku = _get_product_sku()
+        if sku and sku not in product_config["products"]:
+            product_config["products"][sku] = page_link
+            _save_product_detail(sku, page_link)
+
         step_index += 1
-        lstPage = lstPage + [page_link]
+        visited_pages.append(page_link)
 
     if step_index > step_max:
         return
@@ -60,52 +65,36 @@ def __crawl():
         EC.presence_of_element_located((By.TAG_NAME, "main"))
     )
     links = driver.find_elements(By.CSS_SELECTOR, "body a")
-    links = [_link for _link in list(set(links))]
+    links = list(set(links))  # Remove duplicates
 
-    while len(links) > 0:
+    while links:
         link = random.choice(links)
-        href = __url(link.get_attribute("href"))
-        try:
-            if href and href != page_link:
+        href = link.get_attribute("href")
+        href = href.split("#")[0].rstrip("/") if href else None
+
+        if _is_valid_url(href, page_link):
+            try:
                 link.click()
                 time.sleep(10)
                 return __crawl()
-        except:
-            pass
+            except:
+                pass
         links.remove(link)
-    driver.find_element(By.CSS_SELECTOR, "a.logo").click()
-    time.sleep(10)
 
+    # Nếu không còn link nào hợp lệ, quay lại trang chủ
+    try:
+        driver.find_element(By.CSS_SELECTOR, "header a.header__logo").click()
+        time.sleep(10)
+    except:
+        pass
 
 def crawl():
+    global driver
     __browserOpen()
-    driver.get(url)
+    driver.get(base_url)
     __crawl()
     __browserClose()
-
-
-def __url(link):
-    if __urlChecker(link):
-        return link
-    return None
-
-
-def __urlChecker(link):
-    if not link:
-        return False
-    link = link.split("#")[0].rstrip("/")
-    if not Url.valid(link):
-        return False
-    if link in lstPage:
-        return False
-    if any(item for item in lstExcept if item in link or link in item):
-        return False
-    path = link.split("/")[-1].split(".")[0]
-    if not config.isOld(path):
-        if config.valid(config.get(path)):
-            return False
-    return True
-
+    _save_product_list()
 
 def __browserOpen():
     global driver
@@ -124,13 +113,51 @@ def __browserOpen():
 def __browserClose():
     driver.quit()
 
+def _is_valid_url(link, current):
+    if not link:
+        return False
+    if link == current:
+        return False
+    link = link.split("#")[0].rstrip("/")
+    if not Url.valid(link):
+        return False
+    if link in visited_pages:
+        return False
+    if any(exc in link for exc in excluded_pages):
+        return False
+    if not link.startswith(base_url):
+        return False
+    return True
 
-def __productChecker() -> bool:
+
+def _is_product_page():
     try:
-        xpath = "//div[@class='product-info-main']//h1[@class='page-title']"
+        xpath = "//div[@class='product-information']//div[@class='sku']"
         title = driver.find_element(By.XPATH, xpath).text
+        return bool(title)
     except:
-        title = ""
-    if title:
-        return True
-    return False
+        return False
+
+def _get_product_sku():
+    try:
+        # Tùy chỉnh lấy SKU nếu có thẻ cụ thể, hoặc fallback dùng slug
+        # Ví dụ: <div class="product sku">SKU12345</div>
+        sku_elem = driver.find_element(By.CSS_SELECTOR, ".product-detail-page .product-information .sku")
+        return sku_elem.text.strip()
+    except:
+        # fallback dùng đường dẫn cuối cùng của URL
+        return driver.current_url.rstrip("/").split("/")[-1].split(".")[0]
+
+def _save_product_list():
+    with open(config_file, "w") as f:
+        product_config.write(f)
+
+def _save_product_detail(sku, url):
+    product_file = os.path.join(os.dirData(), f"{sku}.ini")
+    cfg = configparser.ConfigParser()
+    cfg["DEFAULT"] = {
+        "url": url,
+        "lastOpen": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    with open(product_file, "w") as f:
+        cfg.write(f)
