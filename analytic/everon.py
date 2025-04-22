@@ -16,6 +16,7 @@ from selenium.common.exceptions import (
     NoSuchElementException,
     StaleElementReferenceException,
     ElementClickInterceptedException,
+    ElementNotInteractableException,
 )
 
 from urllib.parse import urlparse
@@ -102,7 +103,12 @@ def __crawl():
     while waiting_pages:
         href = random.choice(waiting_pages)
         try:
-            link = driver.find_element(By.XPATH, f"//a[@href='{href}']")
+            safe_href = href.replace("'", "&apos;")
+            link = driver.find_element(By.XPATH, f"//a[@href={safe_href}]")
+            driver.execute_script(
+                "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",
+                link,
+            )  # Cuộn đến phần tử trước khi click
             link.click()
             time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
             return __crawl()
