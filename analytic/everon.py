@@ -70,17 +70,17 @@ def __crawl():
     _log(f"Visited: {driver.title} - {driver.current_url}")
 
     if _is_product_page():
-        sku = _get_product_sku()
+        sku = _product_sku()
         if sku and sku not in product_config["products"]:
             print(f"  [✓] New product found: {sku} - {page_link}")
+            _product_save(sku, page_link)
             product_config["products"][sku] = page_link
-            _save_product_detail(sku, page_link)
-        step_index += 1
+            _save_product_list()
+            step_index += 1
 
     if step_index > step_max:
         _log(f"{step_index} > {step_max}")
         return
-    _save_product_list()
 
     # links = driver.find_elements(By.CSS_SELECTOR, "body a")
     links = [
@@ -177,24 +177,19 @@ def _is_valid_url(link, current):
 
 def _is_product_page():
     try:
-        xpath = "//div[@class='product-information']//div[@class='sku']"
-        title = driver.find_element(By.XPATH, xpath).text
-        return bool(title)
+        return bool(_product_sku())
     except:
         return False
 
 
-def _get_product_sku():
+def _product_sku():
     try:
-        # Tùy chỉnh lấy SKU nếu có thẻ cụ thể, hoặc fallback dùng slug
-        # Ví dụ: <div class="product sku">SKU12345</div>
-        sku_elem = driver.find_element(
-            By.CSS_SELECTOR, ".product-detail-page .product-information .sku"
-        )
+        xpath_sku = "//div[@class=product-detail-page]//div[@class=product-information]//div[@class=sku]"
+        sku_elem = driver.find_element(By.XPATH, xpath_sku)
         return sku_elem.text.strip()
     except:
         # fallback dùng đường dẫn cuối cùng của URL
-        return driver.current_url.rstrip("/").split("/")[-1].split(".")[0]
+        return False
 
 
 def _save_product_list():
@@ -202,7 +197,7 @@ def _save_product_list():
         product_config.write(f)
 
 
-def _save_product_detail(sku, url):
+def _product_save(sku, url):
     product_file = os.path.join(os.dirData(), f"{sku}.ini")
     cfg = configparser.ConfigParser()
     cfg["info"] = {
