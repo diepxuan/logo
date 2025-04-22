@@ -33,11 +33,10 @@ product_config.read(config_file)
 domain = "everon.com"
 base_url = f"https://{domain}/"
 
-step_max = 50
+step_max = 20
 step_index = 0
 driver: webdriver.Chrome = None
 
-visited_pages = set()
 excluded_pages = [
     "https://everon.com/login",
     "https://everon.com/register",
@@ -59,9 +58,13 @@ else:
 with open(config_file, "w") as f:
     product_config.write(f)
 
+visited_pages = set()
+visited_pages.update(excluded_pages)
+waiting_pages = []
+
 
 def __crawl():
-    global step_index, driver
+    global step_index, driver, waiting_pages
     print(f"{datetime.now()} Visited: {driver.title} - {driver.current_url}")
     page_link = driver.current_url.split("#")[0].rstrip("/")
     # path = page_link.split("/")[-1].split(".")[0]
@@ -77,10 +80,10 @@ def __crawl():
             print(f"🟢 New product found: {sku} - {page_link}")
             product_config["products"][sku] = page_link
             _save_product_detail(sku, page_link)
-
         step_index += 1
 
     if step_index > step_max:
+        print(f"{step_index} > {step_max}")
         return
     if step_index % 5 == 0:
         _save_product_list()
@@ -101,9 +104,12 @@ def __crawl():
     ]
     hrefs = [href for href in hrefs if _is_valid_url(href, page_link)]
     hrefs = list(set(filter(None, hrefs)))  # Remove None và duplicates
+    waiting_pages = waiting_pages + hrefs
+    waiting_pages = [href for href in waiting_pages if _is_valid_url(href, page_link)]
+    waiting_pages = list(set(filter(None, waiting_pages)))
 
-    while hrefs:
-        href = random.choice(hrefs)
+    while waiting_pages:
+        href = random.choice(waiting_pages)
         if _is_valid_url(href, page_link):
             try:
                 link = driver.find_element(By.XPATH, f"//a[@href='{href}']")
@@ -125,7 +131,7 @@ def __crawl():
             except:
                 pass
 
-        hrefs.remove(href)
+        waiting_pages.remove(href)
 
     # Nếu không còn link nào hợp lệ, quay lại trang chủ
     try:
