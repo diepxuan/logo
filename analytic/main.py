@@ -15,13 +15,13 @@ def run_as_type():
         if hasattr(module, "crawl"):
             module.crawl()
         else:
-            print(f"❌ Module '{module_name}' không có hàm crawl()")
+            print(f"  [✗] Module '{module_name}' không có hàm crawl()")
     except ModuleNotFoundError as e:  # Bắt exception vào biến 'e'
         # In ra thông báo lỗi cụ thể từ exception 'e'
-        print(f"❌ Lỗi khi import module '{module_name}': {e}")
+        print(f"  [✗] Lỗi khi import module '{module_name}': {e}")
     except Exception as e_general:  # (Tùy chọn) Bắt các lỗi khác có thể xảy ra
         print(
-            f"❌ Đã xảy ra lỗi không mong muốn khác khi chạy module '{module_name}': {e_general}"
+            f"  [✗] Đã xảy ra lỗi không mong muốn khác khi chạy module '{module_name}': {e_general}"
         )
         traceback.print_exc()
 

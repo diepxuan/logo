@@ -27,6 +27,8 @@ import __os as os
 import __config as config
 import __url as Url
 
+dev_mode = os.environ.get("MODE", "dev") == "dev"
+
 config_file = os.path.join(os.dirData(), "config.ini")
 product_config = configparser.ConfigParser()
 product_config.read(config_file)
@@ -57,28 +59,28 @@ waiting_pages = []
 
 def __crawl():
     global step_index, driver, waiting_pages
-    print(f"{datetime.now()} Visited: {driver.title} - {driver.current_url}")
+
+    _log("waiting page loaded")
+    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "app")))
+    time.sleep(random.uniform(5, 8))  # Sleep ngẫu nhiên để "giống người dùng"
+
     page_link = driver.current_url.split("#")[0].rstrip("/")
     # path = page_link.split("/")[-1].split(".")[0]
     visited_pages.add(page_link)
-
-    # cho page loaded
-    WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "app")))
-    time.sleep(random.uniform(3, 6))  # Sleep ngẫu nhiên để "giống người dùng"
+    _log(f"Visited: {driver.title} - {driver.current_url}")
 
     if _is_product_page():
         sku = _get_product_sku()
         if sku and sku not in product_config["products"]:
-            print(f"🟢 New product found: {sku} - {page_link}")
+            print(f"  [✓] New product found: {sku} - {page_link}")
             product_config["products"][sku] = page_link
             _save_product_detail(sku, page_link)
         step_index += 1
 
     if step_index > step_max:
-        print(f"{step_index} > {step_max}")
+        _log(f"{step_index} > {step_max}")
         return
-    if step_index % 5 == 0:
-        _save_product_list()
+    _save_product_list()
 
     # links = driver.find_elements(By.CSS_SELECTOR, "body a")
     links = [
@@ -110,23 +112,17 @@ def __crawl():
                 link,
             )  # Cuộn đến phần tử trước khi click
             link.click()
-            time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
             return __crawl()
         except:
             if goto(href):
-                time.sleep(
-                    random.uniform(8, 12)
-                )  # Sleep ngẫu nhiên để "giống người dùng"
                 return __crawl()
 
     # Nếu không còn link nào hợp lệ, quay lại trang chủ
     try:
         driver.find_element(By.CSS_SELECTOR, "header a.header__logo").click()
-        time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
         return __crawl()
     except:
         if goto(base_url):
-            time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
             return __crawl()
 
 
@@ -142,6 +138,7 @@ def crawl():
 
 def __browserOpen() -> webdriver.Firefox:
     global driver
+    __browserClose
     mode = os.environ.get("MODE", "developer")
     options = Options()
     firefox_profile = FirefoxProfile()
@@ -155,6 +152,7 @@ def __browserOpen() -> webdriver.Firefox:
 
 
 def __browserClose():
+    global driver
     driver.quit()
 
 
@@ -221,3 +219,9 @@ def goto(url):
         driver.get(url)
         return True
     return False
+
+
+def _log(messenger):
+    if not dev_mode:
+        return
+    print(f"{datetime.now()} {messenger}")
