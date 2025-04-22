@@ -37,20 +37,11 @@ step_max = 20
 step_index = 0
 driver: webdriver.Chrome = None
 
-excluded_pages = [
-    "https://everon.com/login",
-    "https://everon.com/register",
-    "https://everon.com/cart",
-    "https://everon.com/checkout",
-    "https://everon.com/wishlist",
-    "https://everon.com/compare",
-]
-
 if "products" not in product_config:
     product_config["products"] = {}
 if "excluded" not in product_config:
     product_config["excluded"] = {
-        "pages": "\n".join(excluded_pages),
+        "pages": "",
     }
 else:
     excluded_pages = product_config["excluded"]["pages"].split("\n")
@@ -102,36 +93,23 @@ def __crawl():
     hrefs = [
         (link.get_attribute("href") or "").split("#")[0].rstrip("/") for link in links
     ]
-    hrefs = [href for href in hrefs if _is_valid_url(href, page_link)]
-    hrefs = list(set(filter(None, hrefs)))  # Remove None và duplicates
+    # hrefs = [href for href in hrefs if _is_valid_url(href, page_link)]
+    # hrefs = list(set(filter(None, hrefs)))  # Remove None và duplicates
     waiting_pages = waiting_pages + hrefs
     waiting_pages = [href for href in waiting_pages if _is_valid_url(href, page_link)]
     waiting_pages = list(set(filter(None, waiting_pages)))
 
     while waiting_pages:
         href = random.choice(waiting_pages)
-        if _is_valid_url(href, page_link):
-            try:
-                link = driver.find_element(By.XPATH, f"//a[@href='{href}']")
-                link.click()
-                time.sleep(
-                    random.uniform(8, 12)
-                )  # Sleep ngẫu nhiên để "giống người dùng"
-                return __crawl()
-            except (
-                StaleElementReferenceException,
-                ElementClickInterceptedException,
-                NoSuchElementException,
-            ):
-                goto(href)
-                time.sleep(
-                    random.uniform(8, 12)
-                )  # Sleep ngẫu nhiên để "giống người dùng"
-                return __crawl()
-            except:
-                pass
-
-        waiting_pages.remove(href)
+        try:
+            link = driver.find_element(By.XPATH, f"//a[@href='{href}']")
+            link.click()
+            time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
+            return __crawl()
+        except:
+            goto(href)
+            time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
+            return __crawl()
 
     # Nếu không còn link nào hợp lệ, quay lại trang chủ
     try:
@@ -180,6 +158,8 @@ def _is_valid_url(link, current):
     if link in visited_pages:
         return False
     if any(exc in link for exc in excluded_pages):
+        return False
+    if any(link.startswith(exc) for exc in excluded_pages):
         return False
     if not link.startswith(base_url):
         return False
