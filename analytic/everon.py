@@ -107,16 +107,21 @@ def __crawl():
             time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
             return __crawl()
         except:
-            goto(href)
-            time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
-            return __crawl()
+            if goto(href):
+                time.sleep(
+                    random.uniform(8, 12)
+                )  # Sleep ngẫu nhiên để "giống người dùng"
+                return __crawl()
 
     # Nếu không còn link nào hợp lệ, quay lại trang chủ
     try:
         driver.find_element(By.CSS_SELECTOR, "header a.header__logo").click()
-        time.sleep(10)
+        time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
+        return __crawl()
     except:
-        pass
+        if goto(base_url):
+            time.sleep(random.uniform(8, 12))  # Sleep ngẫu nhiên để "giống người dùng"
+            return __crawl()
 
 
 def crawl():
@@ -208,3 +213,5 @@ def _save_product_detail(sku, url):
 def goto(url):
     if driver.current_url != url:
         driver.get(url)
+        return True
+    return False
