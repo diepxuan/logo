@@ -30,7 +30,7 @@ import __url as Url
 dev_mode = os.environ.get("MODE", "dev") == "dev"
 
 config_file = os.path.join(os.dirData(), "config.ini")
-product_config = configparser.ConfigParser()
+product_config = configparser.ConfigParser(strict=False)
 product_config.read(config_file)
 
 domain = "everon.com"
