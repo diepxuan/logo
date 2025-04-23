@@ -106,7 +106,7 @@ def __crawl():
         href = random.choice(waiting_pages)
         try:
             safe_href = href.replace("'", "&apos;")
-            link = driver.find_element(By.XPATH, f"//a[@href={safe_href}]")
+            link = driver.find_element(By.XPATH, f"//a[@href='{safe_href}']")
             driver.execute_script(
                 "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",
                 link,
@@ -184,7 +184,7 @@ def _is_product_page():
 
 def _product_sku():
     try:
-        xpath_sku = "//div[@class=product-detail-page]//div[@class=product-information]//div[@class=sku]"
+        xpath_sku = "//div[@class='product-detail-page']//div[@class='product-information']//div[@class='sku']"
         sku_elem = driver.find_element(By.XPATH, xpath_sku)
         return sku_elem.text.strip()
     except:
