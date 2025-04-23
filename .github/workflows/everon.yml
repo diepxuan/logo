@@ -43,7 +43,7 @@ jobs:
           python -u analytic || true
         shell: bash
         env:
-          MODE: production
+          # MODE: production
           TYPE: everon
       - name: Setup GPG
         uses: diepxuan/.github/.github/actions/gpg-setup@main
