@@ -11,6 +11,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
 
 from selenium.common.exceptions import (
     NoSuchElementException,
@@ -104,18 +105,26 @@ def __crawl():
 
     while waiting_pages:
         href = random.choice(waiting_pages)
+        safe_href = href.replace("'", "&apos;")
         try:
-            safe_href = href.replace("'", "&apos;")
             link = driver.find_element(By.XPATH, f"//a[@href='{safe_href}']")
             driver.execute_script(
                 "arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});",
                 link,
             )  # Cuộn đến phần tử trước khi click
+            time.sleep(1)  # chờ một chút để scroll hoàn tất
+            link.click()
+        except ElementNotInteractableException:
+            link = driver.find_element(By.XPATH, f"//a[@href='{safe_href}']")
+            actions = ActionChains(driver)
+            actions.move_to_element(link).perform()
+            time.sleep(1)
             link.click()
             return __crawl()
         except:
             if goto(href):
                 return __crawl()
+            pass
 
     # Nếu không còn link nào hợp lệ, quay lại trang chủ
     try:
