@@ -1,4 +1,0 @@
-selenium
-levenshtein
-unidecode
-webdriver-manager
